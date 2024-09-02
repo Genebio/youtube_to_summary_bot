@@ -1,0 +1,6 @@
+Makefile
+request_openai.py
+.env
+.DS_Store
+venv/
+bot/__pycache__/
