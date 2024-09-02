@@ -1,1 +1,1 @@
-web: python3 bot/main.py
+web: venv/bin/python -m bot.main
