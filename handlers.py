@@ -4,7 +4,7 @@ from telegram import Update
 from telegram.ext import ContextTypes
 from openai import OpenAI
 from youtube_transcript_api import YouTubeTranscriptApi, NoTranscriptFound
-from bot.config import OPENAI_API_KEY
+from config import OPENAI_API_KEY
 
 logger = logging.getLogger(__name__)
 

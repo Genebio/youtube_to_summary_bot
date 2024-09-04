@@ -1,0 +1,25 @@
+steps:
+  # Step 1: Install dependencies
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        pip install -r requirements.txt
+
+  # Step 2: Deploy the Google Cloud Function
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'functions'
+      - 'deploy'
+      - 'youtube_to_summary_bot'
+      - '--runtime'
+      - 'python311'
+      - '--trigger-http'
+      - '--allow-unauthenticated'
+      - '--entry-point'
+      - 'telegram_bot'  # The entry point function in your Python code
+      - '--region'
+      - 'europe-west10'
+
+timeout: '600s'  # Optional: Increase if deployment takes longer
