@@ -1,4 +1,3 @@
-Makefile
 request_openai.py
 .env
 .DS_Store
