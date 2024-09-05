@@ -19,6 +19,11 @@ deploy:
 .PHONY: logs
 logs:
 	gcloud functions logs read $(FUNCTION_NAME) --region $(REGION)
+	# gcloud logging read "resource.type=cloud_run_revision AND resource.labels.service_name=youtube-to-summary-bot" --limit=100
+
+lo.PHONY: venv
+logs-local:
+	functions-framework --target=telegram_bot
 
 # Explicitly use the full path to Python 3.11
 PYTHON_VERSION = /usr/local/bin/python3.11

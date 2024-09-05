@@ -2,7 +2,6 @@ import logging
 import asyncio
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
-from telegram.request import HTTPXRequest
 import functions_framework
 from config import TOKEN
 from handlers import handle_video_link, start
@@ -13,14 +12,8 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Custom request with disabled HTTP keep-alive (closes connections after each request)
-custom_request = HTTPXRequest(
-    timeout=10.0,  # Increase timeout duration
-    retry_count=5,
-    # pool_limits=None,  # Disable connection pooling (could help with intermittent issues)
-)
 
-application = Application.builder().token(TOKEN).request(custom_request).build()
+application = Application.builder().token(TOKEN).build()
 
 # Add handlers to the application
 application.add_handler(CommandHandler("start", start))
