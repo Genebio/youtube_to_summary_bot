@@ -1,6 +1,6 @@
 import re
 import logging
-from telegram.error import BadRequest
+from telegram.error import BadRequest, NetworkError
 from telegram import Update
 from telegram.ext import ContextTypes
 from openai import OpenAI
@@ -53,9 +53,13 @@ def fetch_transcript(video_id: str) -> str:
         return f"An unexpected error occurred: {str(e)}"
 
 def escape_markdown(text: str) -> str:
-    """Escapes necessary special characters for Telegram MarkdownV2."""
-    escape_chars = r'_*\[\]()~`>#+-=|{}.!'
-    return re.sub(r'([%s])' % re.escape(escape_chars), r'\\\1', text)
+    """
+    Escapes necessary special characters for Telegram MarkdownV2 
+    while preserving bold/italic formatting.
+    """
+    escape_chars = r'\_*[]()~`>#+-=|{}.!'
+    return re.sub(f'([{re.escape(escape_chars)}])', r'\\\1', text)
+
 
 def summarize_text(text: str, client: OpenAI, language: str = "en") -> str:
     """Summarizes the provided text using the OpenAI API and returns it in MarkdownV2 format, in the user's locale."""
@@ -64,8 +68,8 @@ def summarize_text(text: str, client: OpenAI, language: str = "en") -> str:
         completion = client.chat.completions.create(
             messages=[{
                 "role": "user",
-                "content": f"Summarize this video by highlighting the main points, key statements, and notable quotes from the speakers. "
-                           f"Translate the summary to {language}. Ensure the summary includes core ideas and conclusions clearly:\n{text}"
+                "content": "Summarize the video by providing a short description of the key points discussed. Include any important statements or quotes made by the speakers, as well as the reasoning or explanations they provide for their arguments. Ensure that the summary captures the main ideas and conclusions presented in the video. "
+                           f"Present the summary in {language}:\n{text}"
             }],
             model="gpt-4o-mini"
         )
@@ -105,7 +109,7 @@ async def handle_video_link(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     user_locale = update.effective_user.language_code if update.effective_user.language_code else 'en'
     
     # Call summarize_text with locale
-    summary = summarize_text(transcript, client, language=user_locale)
+    summary = summarize_text(transcript, client, language='ru')
 
     # Handle potential errors in summary
     if "An error occurred" in summary:
@@ -116,11 +120,14 @@ async def handle_video_link(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     await update.message.reply_text("🎉 Done! Here's your video summary: 👇")
 
     try:
-        await update.message.reply_text(text=summary, parse_mode="MarkdownV2")
+        await update.message.reply_text(text=summary, reply_markup="MarkdownV2")
     except BadRequest as e:
         # Handle BadRequest exception (usually due to formatting errors)
         logger.error(f"BadRequest error while sending message: {e}")
         await update.message.reply_text("❗ There was an error formatting the summary. Please try again.")
+    except NetworkError as e:
+        logger.error(f"Network error: {e}")
+        await update.message.reply_text("❗ Network error occurred. Please try again later: {e}")
     except Exception as e:
         # Log any other exceptions
         logger.error(f"Unexpected error: {e}")
