@@ -1,6 +1,7 @@
 import re
 import logging
-from telegram.error import BadRequest, NetworkError
+import asyncio
+from telegram.error import BadRequest
 from telegram import Update
 from telegram.ext import ContextTypes
 from openai import OpenAI
@@ -53,13 +54,9 @@ def fetch_transcript(video_id: str) -> str:
         return f"An unexpected error occurred: {str(e)}"
 
 def escape_markdown(text: str) -> str:
-    """
-    Escapes necessary special characters for Telegram MarkdownV2 
-    while preserving bold/italic formatting.
-    """
-    escape_chars = r'\_*[]()~`>#+-=|{}.!'
-    return re.sub(f'([{re.escape(escape_chars)}])', r'\\\1', text)
-
+    """Escapes necessary special characters for Telegram MarkdownV2."""
+    escape_chars = r'_*\[\]()~`>#+-=|{}.!'
+    return re.sub(r'([%s])' % re.escape(escape_chars), r'\\\1', text)
 
 def summarize_text(text: str, client: OpenAI, language: str = "en") -> str:
     """Summarizes the provided text using the OpenAI API and returns it in MarkdownV2 format, in the user's locale."""
@@ -75,10 +72,10 @@ def summarize_text(text: str, client: OpenAI, language: str = "en") -> str:
         )
         # Get the summary and escape it for MarkdownV2
         summary = completion.choices[0].message.content
-        return escape_markdown(summary)  # Ensure it's escaped properly for MarkdownV2
+        return summary
     except Exception as e:
         logger.error(f"Error during summarization: {e}")
-        return escape_markdown(f"An error occurred while summarizing: {e}")
+        return f"An error occurred while summarizing: {e}"
 
 async def handle_video_link(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Processes the YouTube video link provided by the user."""
@@ -92,6 +89,7 @@ async def handle_video_link(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         return
 
     await update.message.reply_text("🔍 Fetching the transcript...")
+    await asyncio.sleep(1)  # Simulate delay to prevent blocking
 
     # Fetch the transcript
     transcript = fetch_transcript(video_id)
@@ -117,18 +115,17 @@ async def handle_video_link(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         return
 
     # Escape the summary for MarkdownV2 and send it
+    escaped_summary = escape_markdown(summary)
+
     await update.message.reply_text("🎉 Done! Here's your video summary: 👇")
 
     try:
-        await update.message.reply_text(text=summary, reply_markup="MarkdownV2")
+        await update.message.reply_markdown_v2(text=escaped_summary, pool_timeout=60)
     except BadRequest as e:
         # Handle BadRequest exception (usually due to formatting errors)
         logger.error(f"BadRequest error while sending message: {e}")
-        await update.message.reply_text("❗ There was an error formatting the summary. Please try again.")
-    except NetworkError as e:
-        logger.error(f"Network error: {e}")
-        await update.message.reply_text("❗ Network error occurred. Please try again later: {e}")
+        await update.message.reply_text(f"❗ There was an error formatting the summary. Please try again. {e}")
     except Exception as e:
         # Log any other exceptions
         logger.error(f"Unexpected error: {e}")
-        await update.message.reply_text("❗ An unexpected error occurred while sending the summary.")
+        await update.message.reply_text(f"❗ An unexpected error occurred while sending the summary. {e}")

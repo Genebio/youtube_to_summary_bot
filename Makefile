@@ -13,7 +13,8 @@ deploy:
 		--runtime $(RUNTIME) \
 		--gen2 \
 		--entry-point $(ENTRY_POINT) \
-		--allow-unauthenticated
+		--allow-unauthenticated \
+		--timeout=540s
 
 # Read logs from Google Cloud Function
 .PHONY: logs
