@@ -26,8 +26,29 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     )
 
 def extract_video_id(url: str) -> str:
-    """Extracts the video ID from a YouTube URL."""
-    match = re.search(r'(?:v=|youtu\.be/)([a-zA-Z0-9_-]{11})', url)
+    """
+    Extracts the video ID from a variety of YouTube URL formats.
+    
+    Handles URLs such as:
+    - Standard: https://www.youtube.com/watch?v=abc123XYZ
+    - Short: https://youtu.be/abc123XYZ
+    - Embedded: https://www.youtube.com/embed/abc123XYZ
+    - Attribution links, live, shorts, etc.
+    """
+    
+    # Regular expression to match various YouTube URL formats
+    video_id_regex = (
+        r'(?:https?://)?'  # Match the protocol (http or https) (optional)
+        r'(?:www\.)?'  # Optional www subdomain
+        r'(?:youtube\.com|youtu\.be|youtube-nocookie\.com)'  # Match youtube.com or youtu.be or youtube-nocookie.com
+        r'(?:/embed/|/v/|/watch\?v=|/shorts/|/e/|/live/|/watch\?.*v=|/attribution_link?.*v=|/oembed\?url=.*v=|/shorts/|/live/)'  # Match different formats
+        r'([a-zA-Z0-9_-]{11})'  # Capture the 11-character video ID
+    )
+
+    # Search for the video ID using the regex pattern
+    match = re.search(video_id_regex, url)
+
+    # Return the matched video ID if found, else None
     return match.group(1) if match else None
 
 async def fetch_transcript(video_id: str) -> str:
