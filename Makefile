@@ -14,9 +14,13 @@ venv: requirements.in
 	$(PYTHON) -m venv $(VENV_DIR)
 	$(VENV_DIR)/bin/pip install -r requirements.txt
 
+.PHONY: venv
+lint:
+	ruff check handlers.py main.py
 
-.PHONY: deploy
+.PHONY: venv
 deploy:
+	ruff check handlers.py main.py
 	docker build -t gcr.io/$(PROJECT_ID)/$(BOT_NAME):latest .
 	docker push gcr.io/$(PROJECT_ID)/$(BOT_NAME):latest
 	gcloud run deploy $(BOT_NAME) \

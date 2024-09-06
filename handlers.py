@@ -41,7 +41,7 @@ def extract_video_id(url: str) -> str:
         r'(?:https?://)?'  # Match the protocol (http or https) (optional)
         r'(?:www\.)?'  # Optional www subdomain
         r'(?:youtube\.com|youtu\.be|youtube-nocookie\.com)'  # Match youtube.com or youtu.be or youtube-nocookie.com
-        r'(?:/embed/|/v/|/watch\?v=|/shorts/|/e/|/live/|/watch\?.*v=|/attribution_link?.*v=|/oembed\?url=.*v=|/shorts/|/live/)'  # Match different formats
+        r'(?:.*[?&]v=|/embed/|/v/|/e/|/shorts/|/live/|/attribution_link?.*v=|/oembed\?url=.*v=|/)?'  # Match different formats or nothing
         r'([a-zA-Z0-9_-]{11})'  # Capture the 11-character video ID
     )
 
@@ -80,8 +80,8 @@ def escape_markdown_v2(text: str) -> str:
     """
     Escapes special characters for MarkdownV2.
     """
-    escape_chars = r'_*\[\]()~`>#+-=|{}.!'
-    return re.sub(r'([%s])' % re.escape(escape_chars), r'\\\1', text)
+    escape_chars = r'_*[]()~`>#+-=|{}.!'
+    return re.sub(f'([{re.escape(escape_chars)}])', r'\\\1', text)
 
 async def summarize_text(text: str, client: OpenAI, language: str = "en") -> str:
     """Summarizes the provided text using the OpenAI API and returns it in MarkdownV2 format, in the user's locale."""
@@ -90,7 +90,7 @@ async def summarize_text(text: str, client: OpenAI, language: str = "en") -> str
         completion = await asyncio.to_thread(client.chat.completions.create, 
             messages=[{
                 "role": "user",
-                "content": "Summarize the video by providing a short description of the key points discussed. Include any important statements or quotes made by the speakers, as well as the reasoning or explanations they provide for their arguments. Ensure that the summary captures the main ideas and conclusions presented in the video. "
+                "content": "Summarize the video by providing a medium-sized description of the key points discussed. Include any important statements or quotes made by the speakers, as well as the reasoning or explanations they provide for their arguments. Ensure that the summary captures the main ideas and conclusions presented in the video. Additionally, describe the video’s tone, presentation style, and target audience to help users decide whether it suits their preferences. Focus on providing a clear overview to assist in determining whether the video is worth watching. "
                            f"Present the summary in {language}:\n{text}"
             }],
             model="gpt-4o-mini"
@@ -129,10 +129,10 @@ async def handle_video_link(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     client = OpenAI(api_key=OPENAI_API_KEY)
     
     # Detect user's locale from the Telegram context (if available) or use 'en' as default
-    user_locale = update.effective_user.language_code if update.effective_user.language_code else 'en'
+    user_locale = update.effective_user.language_code if update.effective_user.language_code else 'en' # noqa: F841
     
     # Call summarize_text with locale
-    summary = await summarize_text(transcript, client, language=user_locale)
+    summary = await summarize_text(transcript, client, language='ru')
 
     # Handle potential errors in summary
     if "An error occurred" in summary:
@@ -158,3 +158,4 @@ async def handle_video_link(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         # Log any other exceptions
         logger.error(f"Unexpected error: {e}")
         await update.message.reply_text(f"❗ An unexpected error occurred while sending the summary. {e}")
+    
