@@ -10,8 +10,6 @@ anyio==4.4.0
     # via
     #   httpx
     #   openai
-blinker==1.8.2
-    # via flask
 cachetools==5.5.0
     # via google-auth
 certifi==2024.8.30
@@ -21,20 +19,8 @@ certifi==2024.8.30
     #   requests
 charset-normalizer==3.3.2
     # via requests
-click==8.1.7
-    # via
-    #   flask
-    #   functions-framework
-cloudevents==1.11.0
-    # via functions-framework
-deprecation==2.1.0
-    # via cloudevents
 distro==1.9.0
     # via openai
-flask==3.0.3
-    # via functions-framework
-functions-framework==3.8.1
-    # via -r requirements.in
 google-api-core[grpc]==2.19.2
     # via google-cloud-secret-manager
 google-auth==2.34.0
@@ -58,8 +44,6 @@ grpcio==1.66.1
     #   grpcio-status
 grpcio-status==1.66.1
     # via google-api-core
-gunicorn==23.0.0
-    # via functions-framework
 h11==0.14.0
     # via httpcore
 httpcore==1.0.5
@@ -73,22 +57,10 @@ idna==3.8
     #   anyio
     #   httpx
     #   requests
-itsdangerous==2.2.0
-    # via flask
-jinja2==3.1.4
-    # via flask
 jiter==0.5.0
     # via openai
-markupsafe==2.1.5
-    # via
-    #   jinja2
-    #   werkzeug
 openai==1.43.0
     # via -r requirements.in
-packaging==24.1
-    # via
-    #   deprecation
-    #   gunicorn
 proto-plus==1.24.0
     # via
     #   google-api-core
@@ -135,11 +107,5 @@ typing-extensions==4.12.2
     #   pydantic-core
 urllib3==2.2.2
     # via requests
-watchdog==5.0.1
-    # via functions-framework
-werkzeug==3.0.4
-    # via
-    #   flask
-    #   functions-framework
 youtube-transcript-api==0.6.2
     # via -r requirements.in
