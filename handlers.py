@@ -76,8 +76,10 @@ async def fetch_transcript(video_id: str) -> str:
         logger.error(f"An error occurred while fetching the transcript: {e}")
         return f"An unexpected error occurred: {str(e)}"
 
-def escape_markdown(text: str) -> str:
-    """Escapes necessary special characters for Telegram MarkdownV2."""
+def escape_markdown_v2(text: str) -> str:
+    """
+    Escapes special characters for MarkdownV2.
+    """
     escape_chars = r'_*\[\]()~`>#+-=|{}.!'
     return re.sub(r'([%s])' % re.escape(escape_chars), r'\\\1', text)
 
@@ -138,12 +140,16 @@ async def handle_video_link(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         return
 
     # Escape the summary for MarkdownV2 and send it
-    escaped_summary = escape_markdown(summary)
+    escaped_summary = escape_markdown_v2(summary)
 
     await update.message.reply_text("🎉 Done! Here's your video summary: 👇")
 
     try:
-        await update.message.reply_markdown_v2(text=escaped_summary, pool_timeout=60)
+        await update.message.reply_text(
+            text=escaped_summary,
+            parse_mode="MarkdownV2",
+            pool_timeout=120
+            )
     except BadRequest as e:
         # Handle BadRequest exception (usually due to formatting errors)
         logger.error(f"BadRequest error while sending message: {e}")
