@@ -9,6 +9,5 @@ COPY main.py handlers.py config.py /app/
 
 EXPOSE 8080
 
-ENV PORT 8080
-
-CMD ["python", "main.py"]
+# Run the FastAPI app using Uvicorn
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]

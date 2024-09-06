@@ -1,5 +1,5 @@
 # Variables
-BOT_NAME = youtube_to_summary_bot
+BOT_NAME = youtube-to-summary-bot
 PROJECT_ID = telegram-bots-9471
 REGION = europe-west10
 VENV_DIR = venv
@@ -14,16 +14,11 @@ venv: requirements.in
 	$(PYTHON) -m venv $(VENV_DIR)
 	$(VENV_DIR)/bin/pip install -r requirements.txt
 
-.PHONY: build
-build:
-	docker build -t gcr.io/$(PROJECT_ID)/$(BOT_NAME):latest .
-
-.PHONY: push
-push:
-	docker push gcr.io/$(PROJECT_ID)/$(BOT_NAME):latest
 
 .PHONY: deploy
 deploy:
+	docker build -t gcr.io/$(PROJECT_ID)/$(BOT_NAME):latest .
+	docker push gcr.io/$(PROJECT_ID)/$(BOT_NAME):latest
 	gcloud run deploy $(BOT_NAME) \
 	--image gcr.io/$(PROJECT_ID)/$(BOT_NAME):latest \
 	--platform managed \

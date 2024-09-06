@@ -30,10 +30,10 @@ def extract_video_id(url: str) -> str:
     match = re.search(r'(?:v=|youtu\.be/)([a-zA-Z0-9_-]{11})', url)
     return match.group(1) if match else None
 
-def fetch_transcript(video_id: str) -> str:
-    """Fetches the transcript (manual or auto-generated) for a YouTube video."""
+async def fetch_transcript(video_id: str) -> str:
+    """Asynchronously fetches the transcript (manual or auto-generated) for a YouTube video."""
     try:
-        transcripts = YouTubeTranscriptApi.list_transcripts(video_id)
+        transcripts = await asyncio.to_thread(YouTubeTranscriptApi.list_transcripts, video_id)
         
         # Prioritize manual transcripts over auto-generated ones
         transcript = next((t for t in transcripts if not t.is_generated), None)
@@ -41,7 +41,8 @@ def fetch_transcript(video_id: str) -> str:
             transcript = next((t for t in transcripts if t.is_generated), None)
         
         if transcript:
-            return ' '.join([entry['text'] for entry in transcript.fetch()])
+            transcript_data = await asyncio.to_thread(transcript.fetch)
+            return ' '.join([entry['text'] for entry in transcript_data])
         return "No transcript found."
     
     except NoTranscriptFound:
@@ -51,6 +52,7 @@ def fetch_transcript(video_id: str) -> str:
     except VideoUnavailable:
         return "The video is unavailable."
     except Exception as e:
+        logger.error(f"An error occurred while fetching the transcript: {e}")
         return f"An unexpected error occurred: {str(e)}"
 
 def escape_markdown(text: str) -> str:
@@ -58,11 +60,11 @@ def escape_markdown(text: str) -> str:
     escape_chars = r'_*\[\]()~`>#+-=|{}.!'
     return re.sub(r'([%s])' % re.escape(escape_chars), r'\\\1', text)
 
-def summarize_text(text: str, client: OpenAI, language: str = "en") -> str:
+async def summarize_text(text: str, client: OpenAI, language: str = "en") -> str:
     """Summarizes the provided text using the OpenAI API and returns it in MarkdownV2 format, in the user's locale."""
     try:
-        # Translate prompt to the user's language using the language variable
-        completion = client.chat.completions.create(
+        # Make the API call asynchronously
+        completion = await asyncio.to_thread(client.chat.completions.create, 
             messages=[{
                 "role": "user",
                 "content": "Summarize the video by providing a short description of the key points discussed. Include any important statements or quotes made by the speakers, as well as the reasoning or explanations they provide for their arguments. Ensure that the summary captures the main ideas and conclusions presented in the video. "
@@ -91,8 +93,8 @@ async def handle_video_link(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     await update.message.reply_text("🔍 Fetching the transcript...")
     await asyncio.sleep(1)  # Simulate delay to prevent blocking
 
-    # Fetch the transcript
-    transcript = fetch_transcript(video_id)
+    # Fetch the transcript asynchronously
+    transcript = await fetch_transcript(video_id)
     
     if "No transcript found" in transcript or "disabled" in transcript or "unavailable" in transcript:
         await update.message.reply_text(transcript)
@@ -100,14 +102,14 @@ async def handle_video_link(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 
     await update.message.reply_text("✅ Transcript ready! Summarizing the key points for you... 🎯")
 
-    # Summarize the transcript based on the user's locale
+    # Create OpenAI client asynchronously
     client = OpenAI(api_key=OPENAI_API_KEY)
     
     # Detect user's locale from the Telegram context (if available) or use 'en' as default
     user_locale = update.effective_user.language_code if update.effective_user.language_code else 'en'
     
     # Call summarize_text with locale
-    summary = summarize_text(transcript, client, language='ru')
+    summary = await summarize_text(transcript, client, language=user_locale)
 
     # Handle potential errors in summary
     if "An error occurred" in summary:

@@ -1,8 +1,8 @@
 import logging
 import asyncio
+from fastapi import FastAPI, Request
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
-import functions_framework
 from config import TOKEN
 from handlers import handle_video_link, start
 
@@ -12,7 +12,10 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Initialize FastAPI app
+app = FastAPI()
 
+# Create Telegram application (bot) instance
 application = Application.builder().token(TOKEN).build()
 
 # Add handlers to the application
@@ -20,29 +23,28 @@ application.add_handler(CommandHandler("start", start))
 application.add_handler(MessageHandler(filters.Entity("url"), handle_video_link))
 
 async def initialize_application():
-    """Ensure the application is initialized properly."""
+    """Ensure the Telegram application is initialized properly."""
     await application.initialize()
 
-def process_telegram_update(update_data):
-    """Synchronously process the Telegram update."""
+async def process_telegram_update(update_data):
+    """Asynchronously process the Telegram update."""
     update = Update.de_json(update_data, application.bot)
     # Ensure the application is initialized before processing updates
-    asyncio.run(initialize_application())
-    # Run the asynchronous function in a synchronous manner
-    asyncio.run(application.process_update(update))
+    await initialize_application()
+    # Process the update asynchronously
+    await application.process_update(update)
 
-@functions_framework.http
-def telegram_bot(request):
-    """HTTP Cloud Function to handle Telegram updates."""
-    if request.method == "POST":
-        try:
-            # Get the JSON from the request
-            update_data = request.get_json(force=True)
-            # Log the incoming request data for debugging
-            logger.info(f"Incoming request: {update_data}")
-            # Process the update data using the synchronous wrapper
-            process_telegram_update(update_data)
-            return "ok", 200
-        except Exception as e:
-            logger.error(f"Error processing request: {e}")
-            return f"Error: {e}", 500
+@app.post("/webhook")
+async def telegram_webhook(request: Request):
+    """Handle incoming webhook requests from Telegram."""
+    try:
+        # Get the JSON body from the request
+        update_data = await request.json()
+        # Log the incoming request data for debugging
+        logger.info(f"Incoming request: {update_data}")
+        # Process the Telegram update asynchronously
+        await process_telegram_update(update_data)
+        return {"status": "ok"}
+    except Exception as e:
+        logger.error(f"Error processing request: {e}")
+        return {"error": str(e)}, 500
