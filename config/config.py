@@ -1,4 +1,5 @@
 from google.cloud import secretmanager
+from openai import OpenAI
 
 def get_secret(secret_id, version_id):
     client = secretmanager.SecretManagerServiceClient()
@@ -7,11 +8,11 @@ def get_secret(secret_id, version_id):
     return response.payload.data.decode("UTF-8")
 
 TOKEN = get_secret("TOKEN", "2")
-
 if not TOKEN:
     raise ValueError("No TOKEN found in environment variables.")
 
 OPENAI_API_KEY = get_secret("OPENAI_API_KEY", "1")
-
 if not OPENAI_API_KEY:
     raise ValueError("No OPENAI_API_KEY found in environment variables.")
+
+OPENAI_CLIENT = OpenAI(api_key=OPENAI_API_KEY)

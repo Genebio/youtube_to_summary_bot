@@ -69,7 +69,7 @@ async def fetch_transcript(video_id: str) -> str:
         return f"An unexpected error occurred: {str(e)}"
 
 async def summarize_text(transcript: str, client: OpenAI, language: str = "en") -> str:
-    """Summarizes the provided text using the OpenAI API and returns it in MarkdownV2 format, in the user's locale."""
+    """Summarizes the provided text using the OpenAI API and returns it in the user's locale."""
     try:
         # Make the API call asynchronously
         completion = await asyncio.to_thread(client.chat.completions.create, 

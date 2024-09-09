@@ -4,8 +4,8 @@ from telegram.ext import Application, CommandHandler, MessageHandler, filters
 
 from utils.logger import logger
 from config.config import TOKEN
-from handlers import handle_video_link, start
-
+from handlers.youtube_handler import handle_video_link
+from handlers.command_menu import start
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -30,23 +30,18 @@ async def process_telegram_update(update_data):
     """Asynchronously process the Telegram update."""
     try:
         update = Update.de_json(update_data, application.bot)
-        # Ensure the application is initialized before processing updates
         await initialize_application()
-        # Process the update asynchronously
         await application.process_update(update)
     except Exception as e:
         logger.error(f"Error processing Telegram update: {e}, Update Data: {update_data}")
-        raise  # Rethrow the error so it's still visible
+        raise
 
 @app.post("/webhook")
 async def telegram_webhook(request: Request):
     """Handle incoming webhook requests from Telegram."""
     try:
-        # Get the JSON body from the request
         update_data = await request.json()
-        # Log the incoming request data for debugging
         logger.info(f"Incoming request: {update_data}")
-        # Process the Telegram update asynchronously
         await process_telegram_update(update_data)
         return {"status": "ok"}
     except Exception as e:
