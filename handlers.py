@@ -1,5 +1,4 @@
 import re
-import logging
 import asyncio
 from telegram.error import BadRequest
 from telegram import Update
@@ -7,8 +6,8 @@ from telegram.ext import ContextTypes
 from openai import OpenAI
 from youtube_transcript_api import YouTubeTranscriptApi, NoTranscriptFound, TranscriptsDisabled, VideoUnavailable
 from config import OPENAI_API_KEY
+from utils.logger import logger
 
-logger = logging.getLogger(__name__)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handles the /start command."""
@@ -75,13 +74,6 @@ async def fetch_transcript(video_id: str) -> str:
     except Exception as e:
         logger.error(f"An error occurred while fetching the transcript: {e}")
         return f"An unexpected error occurred: {str(e)}"
-
-def escape_markdown_v2(text: str) -> str:
-    """
-    Escapes special characters for MarkdownV2.
-    """
-    escape_chars = r'_*[]()~`>#+-=|{}.!'
-    return re.sub(f'([{re.escape(escape_chars)}])', r'\\\1', text)
 
 async def summarize_text(text: str, client: OpenAI, language: str = "en") -> str:
     """Summarizes the provided text using the OpenAI API and returns it in MarkdownV2 format, in the user's locale."""

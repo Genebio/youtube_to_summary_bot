@@ -1,15 +1,10 @@
-import logging
 from fastapi import FastAPI, Request
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 from config import TOKEN
+from utils.logger import logger
 from handlers import handle_video_link, start
 
-# Enable logging
-logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
-)
-logger = logging.getLogger(__name__)
 
 # Initialize FastAPI app
 app = FastAPI()
