@@ -8,6 +8,7 @@ from youtube_transcript_api import YouTubeTranscriptApi, NoTranscriptFound, Tran
 
 from utils.logger import logger
 from config.config import OPENAI_API_KEY
+from config.constants import VIDEO_ID_REGEX, OPENAI_SUMMARY_PROMPT
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -35,18 +36,9 @@ def extract_video_id(url: str) -> str:
     - Embedded: https://www.youtube.com/embed/abc123XYZ
     - Attribution links, live, shorts, etc.
     """
-    
-    # Regular expression to match various YouTube URL formats
-    video_id_regex = (
-        r'(?:https?://)?'  # Match the protocol (http or https) (optional)
-        r'(?:www\.)?'  # Optional www subdomain
-        r'(?:youtube\.com|youtu\.be|youtube-nocookie\.com)'  # Match youtube.com or youtu.be or youtube-nocookie.com
-        r'(?:.*[?&]v=|/embed/|/v/|/e/|/shorts/|/live/|/attribution_link?.*v=|/oembed\?url=.*v=|/)?'  # Match different formats or nothing
-        r'([a-zA-Z0-9_-]{11})'  # Capture the 11-character video ID
-    )
 
     # Search for the video ID using the regex pattern
-    match = re.search(video_id_regex, url)
+    match = re.search(VIDEO_ID_REGEX, url)
 
     # Return the matched video ID if found, else None
     return match.group(1) if match else None
@@ -76,15 +68,14 @@ async def fetch_transcript(video_id: str) -> str:
         logger.error(f"An error occurred while fetching the transcript: {e}")
         return f"An unexpected error occurred: {str(e)}"
 
-async def summarize_text(text: str, client: OpenAI, language: str = "en") -> str:
+async def summarize_text(transcript: str, client: OpenAI, language: str = "en") -> str:
     """Summarizes the provided text using the OpenAI API and returns it in MarkdownV2 format, in the user's locale."""
     try:
         # Make the API call asynchronously
         completion = await asyncio.to_thread(client.chat.completions.create, 
             messages=[{
                 "role": "user",
-                "content": "Summarize the video by providing a medium-sized description of the key points discussed. Include any important statements or quotes made by the speakers, as well as the reasoning or explanations they provide for their arguments. Ensure that the summary captures the main ideas and conclusions presented in the video. Additionally, describe the video’s tone, presentation style, and target audience to help users decide whether it suits their preferences. Focus on providing a clear overview to assist in determining whether the video is worth watching. "
-                           f"Present the summary in {language}:\n{text}"
+                "content": f"{OPENAI_SUMMARY_PROMPT}{language}:\n{transcript}"
             }],
             model="gpt-4o-mini"
         )
@@ -125,7 +116,7 @@ async def handle_video_link(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     user_locale = update.effective_user.language_code if update.effective_user.language_code else 'en' # noqa: F841
     
     # Call summarize_text with locale
-    summary = await summarize_text(transcript, client, language='ru')
+    summary = await summarize_text(transcript, client, language=user_locale)
 
     # Handle potential errors in summary
     if "An error occurred" in summary:
