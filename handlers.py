@@ -5,8 +5,9 @@ from telegram import Update
 from telegram.ext import ContextTypes
 from openai import OpenAI
 from youtube_transcript_api import YouTubeTranscriptApi, NoTranscriptFound, TranscriptsDisabled, VideoUnavailable
-from config import OPENAI_API_KEY
+
 from utils.logger import logger
+from config.config import OPENAI_API_KEY
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

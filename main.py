@@ -1,8 +1,9 @@
 from fastapi import FastAPI, Request
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
-from config import TOKEN
+
 from utils.logger import logger
+from config.config import TOKEN
 from handlers import handle_video_link, start
 
 
