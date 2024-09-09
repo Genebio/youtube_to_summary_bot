@@ -116,11 +116,11 @@ async def handle_video_link(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     await update.message.reply_text("🔍 Fetching the transcript...")
     await asyncio.sleep(1)  # Simulate delay to prevent blocking
 
-    # Fetch the transcript asynchronously
+    # Fetch the transcript asynchronously:
     transcript = await fetch_transcript(video_id)
     
     if "No transcript found" in transcript or "disabled" in transcript or "unavailable" in transcript:
-        await update.message.reply_text(transcript)
+        await update.message.reply_text(transcript) #### Needs to be fixed: too large text -> Badrequest
         return
 
     await update.message.reply_text("✅ Transcript ready! Summarizing the key points for you... 🎯")

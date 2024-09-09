@@ -23,15 +23,24 @@ application.add_handler(MessageHandler(filters.Entity("url"), handle_video_link)
 
 async def initialize_application():
     """Ensure the Telegram application is initialized properly."""
-    await application.initialize()
+    try:
+        await application.initialize()
+        logger.info("Application initialized successfully.")
+    except Exception as e:
+        logger.error(f"Error initializing application: {e}")
+        raise
 
 async def process_telegram_update(update_data):
     """Asynchronously process the Telegram update."""
-    update = Update.de_json(update_data, application.bot)
-    # Ensure the application is initialized before processing updates
-    await initialize_application()
-    # Process the update asynchronously
-    await application.process_update(update)
+    try:
+        update = Update.de_json(update_data, application.bot)
+        # Ensure the application is initialized before processing updates
+        await initialize_application()
+        # Process the update asynchronously
+        await application.process_update(update)
+    except Exception as e:
+        logger.error(f"Error processing Telegram update: {e}, Update Data: {update_data}")
+        raise  # Rethrow the error so it's still visible
 
 @app.post("/webhook")
 async def telegram_webhook(request: Request):
