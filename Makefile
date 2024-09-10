@@ -16,11 +16,11 @@ venv: requirements.in
 
 .PHONY: venv
 lint:
-	ruff check handlers.py main.py
+	ruff check main.py apis/ config/ handlers/ utils/
 
 .PHONY: venv
 deploy:
-	ruff check handlers.py main.py
+	ruff check main.py apis/ config/ handlers/ utils/
 	docker build -t gcr.io/$(PROJECT_ID)/$(BOT_NAME):latest .
 	docker push gcr.io/$(PROJECT_ID)/$(BOT_NAME):latest
 	gcloud run deploy $(BOT_NAME) \
@@ -28,17 +28,3 @@ deploy:
 	--platform managed \
 	--region $(REGION) \
 	--allow-unauthenticated
-
-.PHONY: logs-err
-logs-err:
-	gcloud logging read \
-		'resource.type="cloud_run_revision" AND logName="projects/telegram-bots-9471/logs/run.googleapis.com/stderr"' \
-		--limit=50 \
-		--freshness=1h
-
-.PHONY: logs-out
-logs-out:
-	gcloud logging read \
-		'resource.type="cloud_run_revision" AND logName="projects/telegram-bots-9471/logs/run.googleapis.com/stdout"' \
-		--limit=50 \
-		--freshness=1h

@@ -8,15 +8,15 @@ VIDEO_ID_REGEX = (
 )
 
 OPENAI_SUMMARY_PROMPT = (
-    "Summarize the video by providing a medium-sized description of the key points discussed. "
-    "Include any important statements or quotes made by the speakers, "
-    "as well as the reasoning or explanations they provide for their arguments. "
-    "Exclude any mentions of advertisements or irrelevant sections. "
-    "Ensure the summary is concise and fits within Telegram's message size limit, while covering the core ideas. "
-    "Additionally, describe the video's tone, presentation style, and target audience "
-    "to help users decide whether it suits their preferences. "
-    "Focus on providing a clear overview to assist in determining whether the video is worth watching. "
-    "Present the summary in "
-    )
+        "Summarize the video by providing a medium-sized description of the key points discussed. "
+        "Include any important statements or quotes made by the speakers, "
+        "as well as the reasoning or explanations they provide for their arguments. "
+        "Ensure that the summary captures the main ideas and conclusions presented in the video. "
+        "Additionally, describe the video's tone, presentation style, and target audience "
+        "to help users decide whether it suits their preferences.  "
+        "Focus on providing a clear overview to assist in determining whether the video is worth watching. "
+        "Present the summary in "
+        )
+
 
 # SUMMARY_TO_SPEECH_PROMPT = ""

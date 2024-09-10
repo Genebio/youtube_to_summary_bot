@@ -1,6 +1,5 @@
 from apis.openai_api import summarize_transcript
 from config.config import OPENAI_CLIENT
-from utils.logger import logger
 
 
 async def handle_summary_request(update, context):
