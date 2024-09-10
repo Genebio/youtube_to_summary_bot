@@ -1,9 +1,8 @@
 import asyncio
 from youtube_transcript_api import (
     YouTubeTranscriptApi, NoTranscriptFound, TranscriptsDisabled, VideoUnavailable
-    )
+)
 from utils.logger import logger
-
 
 async def fetch_transcript(video_id: str) -> str:
     """Asynchronously fetches the transcript (manual or auto-generated) for a YouTube video."""
@@ -18,14 +17,14 @@ async def fetch_transcript(video_id: str) -> str:
         if transcript:
             transcript_data = await asyncio.to_thread(transcript.fetch)
             return ' '.join([entry['text'] for entry in transcript_data])
-        return "No transcript found."
-    
-    except NoTranscriptFound:
-        return "No transcript found for this video."
-    except TranscriptsDisabled:
-        return "Transcripts are disabled for this video."
-    except VideoUnavailable:
-        return "The video is unavailable."
+        
+        logger.warning(f"No transcript found for video ID: '{video_id}'")
+        return None  # Return None to signify failure
+
+    except (NoTranscriptFound, TranscriptsDisabled, VideoUnavailable) as e:
+        logger.warning(f"Transcript error for video ID '{video_id}': {str(e)}")
+        return None  # Return None to signify failure
+
     except Exception as e:
-        logger.error(f"An error occurred while fetching the transcript: {e}")
-        return f"An unexpected error occurred: {str(e)}"
+        logger.error(f"An unexpected error occurred while fetching the transcript for video ID '{video_id}': {str(e)}")
+        return None  # Return None to signify failure

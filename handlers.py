@@ -123,15 +123,11 @@ async def handle_video_link(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         await update.message.reply_text(summary)
         return
 
-    # Escape the summary for MarkdownV2 and send it
-    escaped_summary = escape_markdown_v2(summary)
-
     await update.message.reply_text("🎉 Done! Here's your video summary: 👇")
 
     try:
         await update.message.reply_text(
-            text=escaped_summary,
-            parse_mode="MarkdownV2",
+            text=summary,
             pool_timeout=120
             )
     except BadRequest as e:

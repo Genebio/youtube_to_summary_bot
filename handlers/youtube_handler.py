@@ -1,9 +1,8 @@
 import re
-
-from apis.youtube_api import fetch_transcript
 from utils.logger import logger
+from apis.youtube_api import fetch_transcript
 from config.constants import VIDEO_ID_REGEX
-from handlers import summary_handler
+from handlers.summary_handler import handle_summary_request
 
 
 def extract_video_id(url: str) -> str:
@@ -25,15 +24,15 @@ async def handle_video_link(update, context):
         logger.info(f"Extracted video ID: '{video_id}' from URL: '{url}'")
         transcript = await fetch_transcript(video_id)
 
-        if transcript.startswith("Error"):
-            await update.message.reply_text(f"Error: {transcript}") #TODO
+        if transcript is None:
+            # Send the user-friendly error message
+            await update.message.reply_text(
+                "⚠️ Sorry, we can't get insights from this video. Try another one? 🎥"
+                )
         else:
-            # Send the transcript to the next handler (summary_handler)
-            context.user_data['transcript'] = transcript
-            
-            # Trigger summary handler (summary_handler)
-            await summary_handler.handle_summary_request(update, context)
+            # Pass the transcript directly to the summary handler
+            await handle_summary_request(update, context, transcript)
     else:
         await update.message.reply_text(
             "⚠️ Oops! That doesn't seem like a valid YouTube link. Please double-check and try again. 😊"
-            )
+        )

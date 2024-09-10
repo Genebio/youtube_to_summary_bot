@@ -23,7 +23,7 @@ async def initialize_application():
         await application.initialize()
         logger.info("Application initialized successfully.")
     except Exception as e:
-        logger.error(f"Error initializing application: {e}")
+        logger.error(f"Error initializing application: {str(e)}")
         raise
 
 async def process_telegram_update(update_data):
@@ -33,7 +33,7 @@ async def process_telegram_update(update_data):
         await initialize_application()
         await application.process_update(update)
     except Exception as e:
-        logger.error(f"Error processing Telegram update: {e}, Update Data: {update_data}")
+        logger.error(f"Error processing Telegram update: {str(e)}, Update Data: {update_data}")
         raise
 
 @app.post("/webhook")
@@ -45,5 +45,5 @@ async def telegram_webhook(request: Request):
         await process_telegram_update(update_data)
         return {"status": "ok"}
     except Exception as e:
-        logger.error(f"Error processing request: {e}")
+        logger.error(f"Error processing request: {str(e)}")
         return {"error": str(e)}, 500
