@@ -30,8 +30,9 @@ async def handle_video_link(update, context):
                 "⚠️ Sorry, we can't get insights from this video. Try another one? 🎥"
                 )
         else:
+            context.user_data['transcript'] = transcript
             # Pass the transcript directly to the summary handler
-            await handle_summary_request(update, context, transcript)
+            await handle_summary_request(update, context)
     else:
         await update.message.reply_text(
             "⚠️ Oops! That doesn't seem like a valid YouTube link. Please double-check and try again. 😊"
