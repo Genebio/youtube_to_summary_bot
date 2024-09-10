@@ -1,3 +1,7 @@
+import sys
+
+# Add the /app directory to sys.path so Python can find utils, apis, handlers, etc.
+sys.path.append('/app')
 from fastapi import FastAPI, Request
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters

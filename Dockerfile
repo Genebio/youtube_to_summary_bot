@@ -6,7 +6,7 @@ COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Streamline the copy of specific directories and files
-COPY main.py handlers/ apis/ utils/ config/ /app/
+COPY . /app/
 
 EXPOSE 8080
 
