@@ -3,6 +3,7 @@ from utils.logger import logger
 from apis.youtube_transcript_api import fetch_transcript
 from config.constants import VIDEO_ID_REGEX
 from handlers.summary_handler import handle_summary_request
+from utils.formatter import truncate_by_token_count
 
 
 def extract_video_id(url: str) -> str:
@@ -31,8 +32,7 @@ async def handle_video_link(update, context):
                 "⚠️ Sorry, we can't get insights from this video. Try another one? 🎥"
                 )
         else:
-            context.user_data['transcript'] = transcript
-            # Pass the transcript directly to the summary handler
+            context.user_data['transcript'] = truncate_by_token_count(transcript)
             await handle_summary_request(update, context)
     else:
         await update.message.reply_text(

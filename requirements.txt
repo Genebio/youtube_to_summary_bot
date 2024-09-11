@@ -94,9 +94,12 @@ pydantic-core==2.20.1
     # via pydantic
 python-telegram-bot[webhooks]==21.5
     # via -r requirements.in
+regex==2024.7.24
+    # via tiktoken
 requests==2.32.3
     # via
     #   google-api-core
+    #   tiktoken
     #   youtube-transcript-api
 rsa==4.9
     # via google-auth
@@ -108,6 +111,8 @@ sniffio==1.3.1
 starlette==0.38.4
     # via fastapi
 tenacity==9.0.0
+    # via -r requirements.in
+tiktoken==0.7.0
     # via -r requirements.in
 tornado==6.4.1
     # via python-telegram-bot

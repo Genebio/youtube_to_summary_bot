@@ -1,7 +1,7 @@
 import asyncio
 from openai import RateLimitError, OpenAIError
 from utils.logger import logger
-from config.constants import OPENAI_SUMMARY_PROMPT
+from config.constants import OPENAI_SUMMARY_PROMPT, OPENAI_SUMMARY_MODEL
 
 
 async def summarize_transcript(transcript: str, client, language: str = "en") -> str:
@@ -15,7 +15,7 @@ async def summarize_transcript(transcript: str, client, language: str = "en") ->
                 "role": "user",
                 "content": f"{OPENAI_SUMMARY_PROMPT}. Present the summary in '{language}' language:\n\n{transcript}"
             }],
-            model="gpt-4o-mini"
+            model=OPENAI_SUMMARY_MODEL
         )
 
         # Extract the summary from the API response

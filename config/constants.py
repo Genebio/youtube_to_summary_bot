@@ -17,3 +17,7 @@ OPENAI_SUMMARY_PROMPT = (
         "Focus on providing a clear overview to assist in determining whether the video is worth watching. "
         )
 
+MAX_TOKENS = 125000
+OPENAI_SUMMARY_MODEL = "gpt-4o-mini"
+OPENAI_TTS_MODEL = "tts-1"
+OPENAI_TTS_VOICE = "alloy"

@@ -2,6 +2,7 @@ import asyncio
 import io
 from openai import RateLimitError, OpenAIError
 from utils.logger import logger
+from config.constants import OPENAI_TTS_MODEL, OPENAI_TTS_VOICE
 
 
 async def convert_summary_to_speech(summary: str, client) -> io.BytesIO:
@@ -23,8 +24,8 @@ async def convert_summary_to_speech(summary: str, client) -> io.BytesIO:
 
         # Await the API response, but don't use `async with`
         response = await client.audio.speech.create(
-            model="tts-1",  # Text-to-Speech model
-            voice="alloy",  # Voice specification
+            model=OPENAI_TTS_MODEL,  # Text-to-Speech model
+            voice=OPENAI_TTS_VOICE,  # Voice specification
             input=summary  # The summary text to be converted to speech
         )
 

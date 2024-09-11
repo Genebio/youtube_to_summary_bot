@@ -11,7 +11,7 @@ async def handle_speech_conversion(update, context):
     
     if summary:
         # Inform the user that the bot is processing the request
-        await message.reply_text("🎧 Please wait ... 🐢")
+        await message.reply_text("🔊 Audio in progress... (about 30 sec)")
 
         # Convert the summary to speech and get the in-memory MP3 file
         audio_file = await convert_summary_to_speech(summary, OPENAI_CLIENT)
@@ -21,7 +21,7 @@ async def handle_speech_conversion(update, context):
             await context.bot.send_audio(
                 chat_id=message.chat_id,
                 audio=audio_file,
-                title="✨ YouTube video summary ✨",
+                title="YouTube video summary",
                 performer="@youtube_to_summary_bot"
             )
         else:
