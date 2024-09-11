@@ -2,13 +2,14 @@ import sys
 import httpx
 from fastapi import FastAPI, Request
 from telegram import Update
-from telegram.ext import Application, CommandHandler, MessageHandler, filters
+from telegram.ext import Application, CommandHandler, MessageHandler, CallbackQueryHandler, filters
 from tenacity import retry, stop_after_attempt, wait_fixed
 
 from utils.logger import logger
 from config.config import TOKEN
 from handlers.transcript_handler import handle_video_link
 from handlers.command_menu import start
+from handlers.summary_handler import convert_to_audio_callback
 
 # Add the /app directory to sys.path so Python can find utils, apis, handlers, etc.
 sys.path.append('/app')
@@ -22,17 +23,26 @@ http_client = httpx.AsyncClient()
 # Create Telegram application (bot) instance
 telegram_application = Application.builder().token(TOKEN).build()
 
-# Add handlers to the application
-telegram_application.add_handler(CommandHandler("start", start))
-telegram_application.add_handler(MessageHandler(filters.Entity("url"), handle_video_link))
+# Register bot handlers, including the callback handler for inline buttons
+def register_handlers(application):
+    """Register all command and callback handlers."""
+    # Register start command and video link message handlers
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(MessageHandler(filters.Entity("url"), handle_video_link))
 
-# Clean up the connection pool on shutdown
+    # Register the callback query handler for 'convert_to_audio'
+    application.add_handler(CallbackQueryHandler(convert_to_audio_callback, pattern='convert_to_audio'))
+
+# Call the function to register handlers
+register_handlers(telegram_application)
+
+# Clean up the HTTP connection pool on shutdown
 @app.on_event("shutdown")
 async def shutdown_event():
     """Ensure connection pool is closed on shutdown."""
     await http_client.aclose()
 
-# Retry configuration: Retry up to 3 times with a 2-second wait in between
+# Retry configuration: Retry up to 3 times with a 2-second wait in between attempts
 @retry(stop=stop_after_attempt(3), wait=wait_fixed(2))
 async def fetch_data_with_retries(url: str):
     """Fetch data from a URL with retries."""
@@ -47,6 +57,7 @@ async def fetch_data_with_retries(url: str):
         logger.error(f"Error response {e.response.status_code} while requesting {url}: {str(e)}")
         raise
 
+# Initialize Telegram bot application
 async def initialize_application():
     """Ensure the Telegram application is initialized properly."""
     try:
@@ -56,6 +67,7 @@ async def initialize_application():
         logger.error(f"Error initializing Telegram application: {str(e)}")
         raise
 
+# Process the incoming update from Telegram
 async def process_telegram_update(update_data):
     """Asynchronously process the Telegram update."""
     try:
@@ -66,6 +78,7 @@ async def process_telegram_update(update_data):
         logger.error(f"Error processing Telegram update: {str(e)}, Update Data: {update_data}")
         raise
 
+# FastAPI webhook to handle incoming Telegram updates
 @app.post("/webhook")
 async def telegram_webhook(request: Request):
     """Handle incoming webhook requests from Telegram."""

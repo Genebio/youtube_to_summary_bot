@@ -28,3 +28,7 @@ deploy:
 	--platform managed \
 	--region $(REGION) \
 	--allow-unauthenticated
+
+.PHONY: venv
+stop:
+	gcloud run services delete $(BOT_NAME) --region $(REGION)

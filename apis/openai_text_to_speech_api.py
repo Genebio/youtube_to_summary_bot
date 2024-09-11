@@ -1,15 +1,9 @@
 import asyncio
 import io
-from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 from openai import RateLimitError, OpenAIError
 from utils.logger import logger
 
-# Retry configuration: Retry logic for transient errors such as network issues, rate limits, or timeouts.
-@retry(
-    stop=stop_after_attempt(3),  # Retry up to 3 times
-    wait=wait_exponential(multiplier=1, min=2, max=10),  # Exponential backoff starting at 2s, max 10s
-    retry=retry_if_exception_type((asyncio.TimeoutError, OpenAIError, RateLimitError))
-)
+
 async def convert_summary_to_speech(summary: str, client) -> io.BytesIO:
     """
     Converts the given summary to speech using the OpenAI TTS API and returns an in-memory MP3 file object.
@@ -47,7 +41,7 @@ async def convert_summary_to_speech(summary: str, client) -> io.BytesIO:
 
     except (RateLimitError, OpenAIError, asyncio.TimeoutError) as e:
         logger.error(f"Error converting summary to speech: {e}")
-        raise  # Reraises the error to trigger retry logic
+        raise
 
     except Exception as e:
         logger.error(f"Unexpected error during text-to-speech conversion: {e}")

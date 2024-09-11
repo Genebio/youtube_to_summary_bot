@@ -17,5 +17,3 @@ OPENAI_SUMMARY_PROMPT = (
         "Focus on providing a clear overview to assist in determining whether the video is worth watching. "
         )
 
-
-# SUMMARY_TO_SPEECH_PROMPT = ""
