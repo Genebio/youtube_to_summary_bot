@@ -10,6 +10,7 @@ from utils.logger import logger
 async def fetch_transcript(video_id: str) -> str:
     """Asynchronously fetches the transcript (manual or auto-generated) for a YouTube video."""
     try:
+        logger.info(f"Fetching transcript for video ID: '{video_id}'")
         transcripts = await asyncio.to_thread(YouTubeTranscriptApi.list_transcripts, video_id)
         
         # Prioritize manual transcripts over auto-generated ones

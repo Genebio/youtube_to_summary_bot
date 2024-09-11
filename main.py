@@ -7,7 +7,7 @@ from tenacity import retry, stop_after_attempt, wait_fixed
 
 from utils.logger import logger
 from config.config import TOKEN
-from handlers.youtube_handler import handle_video_link
+from handlers.transcript_handler import handle_video_link
 from handlers.command_menu import start
 
 # Add the /app directory to sys.path so Python can find utils, apis, handlers, etc.

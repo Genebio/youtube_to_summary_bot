@@ -1,6 +1,6 @@
 import re
 from utils.logger import logger
-from apis.youtube_api import fetch_transcript
+from apis.youtube_transcript_api import fetch_transcript
 from config.constants import VIDEO_ID_REGEX
 from handlers.summary_handler import handle_summary_request
 
@@ -19,9 +19,10 @@ async def handle_video_link(update, context):
     """
     url = update.message.text
     video_id = extract_video_id(url)
+    logger.info(f"Extracted video ID: '{video_id}' from URL: '{url}'")
     
     if video_id:
-        logger.info(f"Extracted video ID: '{video_id}' from URL: '{url}'")
+        await update.message.reply_text("🔍 ...")
         transcript = await fetch_transcript(video_id)
 
         if transcript is None:
