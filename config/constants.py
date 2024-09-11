@@ -15,7 +15,6 @@ OPENAI_SUMMARY_PROMPT = (
         "Additionally, describe the video's tone, presentation style, and target audience "
         "to help users decide whether it suits their preferences.  "
         "Focus on providing a clear overview to assist in determining whether the video is worth watching. "
-        "Present the summary in "
         )
 
 

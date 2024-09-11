@@ -19,7 +19,7 @@ async def summarize_transcript(transcript: str, client, language: str = "en") ->
         completion = await client.chat.completions.create(
             messages=[{
                 "role": "user",
-                "content": f"{OPENAI_SUMMARY_PROMPT}{language}:\n{transcript}"
+                "content": f"{OPENAI_SUMMARY_PROMPT}. Present the summary in '{language}' language:\n\n{transcript}"
             }],
             model="gpt-4o-mini"
         )
