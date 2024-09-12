@@ -16,11 +16,11 @@ venv: requirements.in
 
 .PHONY: venv
 lint:
-	ruff check main.py apis/ config/ handlers/ utils/
+	ruff check --no-cache main.py apis/ config/ handlers/ utils/
 
 .PHONY: venv
 deploy:
-	ruff check main.py apis/ config/ handlers/ utils/
+	ruff check --no-cache main.py apis/ config/ handlers/ utils/
 	docker build -t gcr.io/$(PROJECT_ID)/$(BOT_NAME):latest .
 	docker push gcr.io/$(PROJECT_ID)/$(BOT_NAME):latest
 	gcloud run deploy $(BOT_NAME) \
