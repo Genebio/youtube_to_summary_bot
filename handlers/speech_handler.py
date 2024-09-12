@@ -25,6 +25,7 @@ async def handle_speech_conversion(update, context):
                 performer="@youtube_to_summary_bot"
             )
         else:
-            await message.reply_text("Error generating speech from summary.")
+            await message.reply_text("🔊❌ Audio unavailable. Try another video?")
     else:
-        await message.reply_text("No summary available for speech conversion.")
+        await message.reply_text("⏳ Summary expired (10 min limit). "
+                                 "Please resend YouTube link for fresh summary and audio.")
