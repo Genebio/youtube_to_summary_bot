@@ -2,7 +2,9 @@ import sys
 import httpx
 from fastapi import FastAPI, Request
 from telegram import Update
-from telegram.ext import Application, CommandHandler, MessageHandler, CallbackQueryHandler, filters
+from telegram.ext import (
+    Application, CommandHandler, MessageHandler, CallbackQueryHandler, filters, PicklePersistence
+    )
 from tenacity import retry, stop_after_attempt, wait_fixed
 
 from utils.logger import logger
@@ -20,8 +22,11 @@ app = FastAPI()
 # Initialize the global HTTP client with connection pooling
 http_client = httpx.AsyncClient()
 
+# Use a pickle-based persistence object
+persistence = PicklePersistence(filepath='bot_data.pkl')
+
 # Create Telegram application (bot) instance
-telegram_application = Application.builder().token(TOKEN).build()
+telegram_application = Application.builder().token(TOKEN).persistence(persistence).build()
 
 # Register bot handlers, including the callback handler for inline buttons
 def register_handlers(application):
@@ -39,8 +44,17 @@ register_handlers(telegram_application)
 # Clean up the HTTP connection pool on shutdown
 @app.on_event("shutdown")
 async def shutdown_event():
-    """Ensure connection pool is closed on shutdown."""
+    """Ensure connection pool and Telegram application are closed on shutdown."""
+    # Check if the Telegram application is running before stopping it
+    if telegram_application.running:
+        await telegram_application.stop()
+        logger.info("Telegram application stopped successfully.")
+    else:
+        logger.info("Telegram application was not running.")
+        
+    # Close the HTTP client connection
     await http_client.aclose()
+    logger.info("HTTP client closed.")
 
 # Retry configuration: Retry up to 3 times with a 2-second wait in between attempts
 @retry(stop=stop_after_attempt(3), wait=wait_fixed(2))
