@@ -1,5 +1,4 @@
 request_openai.py
 .env
-.DS_Store
 venv/
-bot/__pycache__/
+.DS_Store

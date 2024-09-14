@@ -1,5 +1,8 @@
+import os
 from google.cloud import secretmanager
 from openai import AsyncOpenAI
+from sqlalchemy import create_engine
+
 
 def get_secret(secret_id, version_id):
     client = secretmanager.SecretManagerServiceClient()
@@ -16,3 +19,15 @@ if not OPENAI_API_KEY:
     raise ValueError("No OPENAI_API_KEY found in environment variables.")
 
 OPENAI_CLIENT = AsyncOpenAI(api_key=OPENAI_API_KEY)
+
+
+DB_USER = os.getenv("DB_USER")
+DB_PASS = os.getenv("DB_PASS")
+DB_NAME = os.getenv("DB_NAME")
+DB_HOST = os.getenv("DB_HOST")  # '/cloudsql/project-id:region:instance-id'
+
+# Create the connection string
+DATABASE_URL = f"postgresql+psycopg2://{DB_USER}:{DB_PASS}@{DB_HOST}/{DB_NAME}"
+
+# Create the SQLAlchemy engine
+engine = create_engine(DATABASE_URL)
