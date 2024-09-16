@@ -1,7 +1,6 @@
 from sqlalchemy import Column, Integer, String, Boolean, Text, DateTime, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
-from datetime import datetime
-from config.config import ARMENIA_TZ
+from utils.datetime_utils import get_formatted_time
 from .base import Base  # Import the Base model
 
 class Summary(Base):
@@ -20,7 +19,7 @@ class Summary(Base):
     got_audio = Column(Boolean, default=False)
     tts_model = Column(String(100))
     tts_tokens = Column(Integer)
-    created_at = Column(DateTime, default=datetime.now(ARMENIA_TZ))
+    created_at = Column(DateTime, default=get_formatted_time())
 
     # Unique constraint for video_id and language_code combination
     __table_args__ = (UniqueConstraint('video_id', 'language_code', name='_video_language_uc'),)

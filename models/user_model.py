@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Boolean, DateTime
 from sqlalchemy.orm import relationship
-from datetime import datetime
+from utils.datetime_utils import get_formatted_time
 from .base import Base
 
 class User(Base):
@@ -12,7 +12,7 @@ class User(Base):
     last_name = Column(String(100))
     language_code = Column(String(10))
     current_subscription_status = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=datetime.now(datetime.UTC))
+    created_at = Column(DateTime, default=get_formatted_time())
     
     # Relationships to other models
     sessions = relationship("Session", back_populates="user")

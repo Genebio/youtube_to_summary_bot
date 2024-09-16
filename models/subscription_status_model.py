@@ -1,7 +1,6 @@
 from sqlalchemy import Column, Integer, Boolean, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
-from datetime import datetime
-from config.config import ARMENIA_TZ
+from utils.datetime_utils import get_formatted_time
 from .base import Base
 
 class SubscriptionStatus(Base):
@@ -10,7 +9,7 @@ class SubscriptionStatus(Base):
     subscription_id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey('users.user_id'))
     status = Column(Boolean)
-    start_time = Column(DateTime, default=datetime.now(ARMENIA_TZ))
+    start_time = Column(DateTime, default=get_formatted_time())
     end_time = Column(DateTime)
     
     # Relationships
