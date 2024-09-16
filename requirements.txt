@@ -80,6 +80,8 @@ protobuf==5.28.0
     #   grpc-google-iam-v1
     #   grpcio-status
     #   proto-plus
+psycopg2-binary==2.9.9
+    # via -r requirements.in
 pyasn1==0.6.0
     # via
     #   pyasn1-modules
@@ -93,6 +95,8 @@ pydantic==2.8.2
 pydantic-core==2.20.1
     # via pydantic
 python-telegram-bot[webhooks]==21.5
+    # via -r requirements.in
+pytz==2024.2
     # via -r requirements.in
 regex==2024.7.24
     # via tiktoken

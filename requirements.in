@@ -7,3 +7,5 @@ fastapi==0.113.0
 uvicorn==0.30.6
 tenacity==9.0.0
 sqlalchemy==2.0.34
+psycopg2-binary==2.9.9
+pytz==2024.2

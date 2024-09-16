@@ -6,6 +6,7 @@ from telegram.ext import (
     Application, CommandHandler, MessageHandler, CallbackQueryHandler, filters, PicklePersistence
     )
 from tenacity import retry, stop_after_attempt, wait_fixed
+from contextlib import asynccontextmanager
 
 from utils.logger import logger
 from config.config import TOKEN
@@ -15,9 +16,6 @@ from handlers.summary_handler import convert_to_audio_callback
 
 # Add the /app directory to sys.path so Python can find utils, apis, handlers, etc.
 sys.path.append('/app')
-
-# Initialize FastAPI app
-app = FastAPI()
 
 # Initialize the global HTTP client with connection pooling
 http_client = httpx.AsyncClient()
@@ -41,20 +39,28 @@ def register_handlers(application):
 # Call the function to register handlers
 register_handlers(telegram_application)
 
-# Clean up the HTTP connection pool on shutdown
-@app.on_event("shutdown")
-async def shutdown_event():
-    """Ensure connection pool and Telegram application are closed on shutdown."""
-    # Check if the Telegram application is running before stopping it
-    if telegram_application.running:
-        await telegram_application.stop()
-        logger.info("Telegram application stopped successfully.")
-    else:
-        logger.info("Telegram application was not running.")
+# Lifespan context manager for app startup and shutdown events
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup logic (e.g., initializing Telegram bot)
+    try:
+        await telegram_application.initialize()
+        logger.info("Telegram application initialized successfully.")
+        yield  # This is where the app runs
+    finally:
+        # Shutdown logic (closing Telegram app and HTTP client)
+        if telegram_application.running:
+            await telegram_application.stop()
+            logger.info("Telegram application stopped successfully.")
+        else:
+            logger.info("Telegram application was not running.")
         
-    # Close the HTTP client connection
-    await http_client.aclose()
-    logger.info("HTTP client closed.")
+        # Close the HTTP client connection
+        await http_client.aclose()
+        logger.info("HTTP client closed.")
+
+# Assign the lifespan handler to FastAPI
+app = FastAPI(lifespan=lifespan)
 
 # Retry configuration: Retry up to 3 times with a 2-second wait in between attempts
 @retry(stop=stop_after_attempt(3), wait=wait_fixed(2))

@@ -32,3 +32,7 @@ deploy:
 .PHONY: venv
 stop:
 	gcloud run services delete $(BOT_NAME) --region $(REGION)
+
+.PHONY: venv
+sql-connect:
+	gcloud beta sql connect mybots-europe-west3 --user=postgres
