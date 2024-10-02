@@ -11,7 +11,7 @@ class Summary(Base):
     session_id = Column(Integer, ForeignKey('sessions.session_id'))
     video_id = Column(String(50), nullable=False)
     video_url = Column(String(100), nullable=False)
-    language_code = Column(String(10), nullable=False)
+    language_code = Column(String(10), nullable=True)
     text_summary = Column(Text)
     input_tokens = Column(Integer)
     output_tokens = Column(Integer)
@@ -27,3 +27,12 @@ class Summary(Base):
 
     user = relationship("User", back_populates="summaries")
     session = relationship("Session", back_populates="summaries")
+
+    def __init__(self, user, **kwargs):
+        """
+        Override init to inherit language_code from the user if not explicitly set.
+        """
+        if 'language_code' not in kwargs or kwargs['language_code'] is None:
+            kwargs['language_code'] = user.language_code  # Inherit the language_code from the user
+        
+        super().__init__(user=user, **kwargs)
