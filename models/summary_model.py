@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, Boolean, Text, DateTime, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
 from utils.datetime_utils import get_formatted_time
-from .base import Base  # Import the Base model
+from models.base import Base
 
 class Summary(Base):
     __tablename__ = 'summaries'
@@ -10,6 +10,7 @@ class Summary(Base):
     user_id = Column(Integer, ForeignKey('users.user_id'))
     session_id = Column(Integer, ForeignKey('sessions.session_id'))
     video_id = Column(String(50), nullable=False)
+    video_url = Column(String(100), nullable=False)
     language_code = Column(String(10), nullable=False)
     text_summary = Column(Text)
     input_tokens = Column(Integer)

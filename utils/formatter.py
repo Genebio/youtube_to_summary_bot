@@ -1,25 +1,28 @@
+import re
 import tiktoken
-from config.constants import MAX_TOKENS, OPENAI_SUMMARY_MODEL
+from config.constants import VIDEO_ID_REGEX, MAX_TOKENS, OPENAI_SUMMARY_MODEL
 
 
-def clean_markdown_symbols(summary: str) -> str:
+class ServiceResponse:
+    def __init__(self, data=None, error=None):
+        self.data = data
+        self.error = error
+
+    def is_success(self):
+        """Returns True if the response has data and no error."""
+        return self.data is not None and self.error is None
+
+
+def extract_video_id(url: str) -> ServiceResponse:
     """
-    Removes specified Markdown V2 symbols (e.g., '*', '#') from the summary.
-    
-    Args:
-        summary (str): The summary text to clean.
-
-    Returns:
-        str: The cleaned summary.
+    Extracts the video ID from a variety of YouTube URL formats.
     """
-    # Dictionary of Markdown V2 symbols to remove
-    remove_chars = {'*': '', '#': ''}
+    match = re.search(VIDEO_ID_REGEX, url)
     
-    # Create a translation table from the dictionary
-    translation_table = str.maketrans(remove_chars)
-    
-    # Translate the summary using the translation table
-    return summary.translate(translation_table)
+    if match:
+        video_id = match.group(1)
+        return ServiceResponse(data=video_id)
+    return ServiceResponse(error="Unable to extract video ID.")
 
 def count_tokens(text):
     encoding = tiktoken.encoding_for_model(OPENAI_SUMMARY_MODEL)

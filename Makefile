@@ -2,17 +2,12 @@
 BOT_NAME = youtube-to-summary-bot
 PROJECT_ID = telegram-bots-9471
 REGION = europe-west10
-VENV_DIR = venv
-PYTHON = /usr/local/bin/python3.11
 
 
 # Create a virtual environment and install dependencies
-.PHONY: venv
-venv: requirements.in
-	$(PYTHON) -m pip install pip-tools
-	$(PYTHON) -m piptools compile requirements.in
-	$(PYTHON) -m venv $(VENV_DIR)
-	$(VENV_DIR)/bin/pip install -r requirements.txt
+.PHONY: deps
+deps: requirements.in
+	uv pip compile -p 3.11 --no-cache --no-strip-extras requirements.in -o requirements.txt
 
 .PHONY: venv
 lint:

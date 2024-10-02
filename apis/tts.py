@@ -2,23 +2,25 @@ import asyncio
 import io
 from openai import RateLimitError, OpenAIError
 from utils.logger import logger
+from utils.formatter import ServiceResponse
 from config.constants import OPENAI_TTS_MODEL, OPENAI_TTS_VOICE
 
 
-async def convert_summary_to_speech(summary: str, client) -> io.BytesIO:
+async def convert_summary_to_speech(summary: str, client) -> ServiceResponse:
     """
-    Converts the given summary to speech using the OpenAI TTS API and returns an in-memory MP3 file object.
-    
+    Converts the given summary to speech using the OpenAI TTS API and returns an in-memory MP3 file object 
+    along with TTS model details.
+
     Args:
         summary (str): The text to be converted to speech.
         client (object): AsyncOpenAI client instance.
-    
+
     Returns:
-        io.BytesIO: In-memory MP3 file object, or None in case of an error.
+        ServiceResponse: Contains in-memory MP3 file object, TTS model, and token usage in 'data', or an error message.
     """
     try:
         logger.info("Attempting to convert the summary to speech using OpenAI TTS API...")
-        
+
         # Create an in-memory file object to store the streaming response (MP3 data)
         audio_file = io.BytesIO()
 
@@ -30,7 +32,7 @@ async def convert_summary_to_speech(summary: str, client) -> io.BytesIO:
         )
 
         # Stream the audio content directly to the in-memory file in chunks
-        for chunk in response.iter_bytes():  # Regular `for` loop
+        for chunk in response.iter_bytes():
             audio_file.write(chunk)
 
         # Set the name and seek position of the in-memory file for proper Telegram handling
@@ -38,12 +40,21 @@ async def convert_summary_to_speech(summary: str, client) -> io.BytesIO:
         audio_file.seek(0)  # Rewind the file to the beginning
 
         logger.info("Successfully generated in-memory audio file.")
-        return audio_file
+        
+        # Extract TTS model and token usage from response (adjust based on actual response structure)
+        tts_model = response.model
+        tts_tokens = response.tokens_used
+
+        return ServiceResponse(data={
+            "audio_file": audio_file,
+            "tts_model": tts_model,
+            "tts_tokens": tts_tokens
+        })
 
     except (RateLimitError, OpenAIError, asyncio.TimeoutError) as e:
         logger.error(f"Error converting summary to speech: {e}")
-        raise
+        return ServiceResponse(error=f"Error converting summary to speech: {str(e)}")
 
     except Exception as e:
         logger.error(f"Unexpected error during text-to-speech conversion: {e}")
-        return None
+        return ServiceResponse(error=f"Unexpected error during text-to-speech conversion: {str(e)}")
