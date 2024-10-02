@@ -1,18 +1,20 @@
 from repositories.summary_repository import SummaryRepository
-from apis.fetch_transcript import fetch_youtube_transcript
-from apis.summary import summarize_transcript
-from apis.tts import convert_summary_to_speech
+from repositories.user_repository import UserRepository
+from apis.youtube_transcript_api import fetch_youtube_transcript
+from apis.openai_summary_api import summarize_transcript
+from apis.openai_text_to_speech_api import convert_summary_to_speech
 from config.config import OPENAI_CLIENT
 from utils.formatter import extract_video_id, ServiceResponse
-from models.user_model import User
-from models.session_model import Session as UserSession
+
 
 class SummaryService:
     def __init__(self, db):
         self.summary_repo = SummaryRepository(db)
-        self.db = db  # Keep the database session for querying related objects
+        self.user_repo = UserRepository(db)
+        # SessionRepo will be added later
+        # self.session_repo = SessionRepository(db)
 
-    async def process_summary(self, video_url: str, language_code: str, user_id: int, session_id: int) -> ServiceResponse:
+    async def process_summary(self, video_url: str, user_id: int) -> ServiceResponse:
         """Handles the main logic for fetching the transcript and summarizing it."""
         
         # Step 1: Extract video_id from video_url
@@ -21,17 +23,15 @@ class SummaryService:
             return ServiceResponse(error=video_id_response.error)
         video_id = video_id_response.data
 
-        # Step 2: Check if a summary already exists for this video and language
-        existing_summary = self.summary_repo.get_summary_by_video_and_language(video_id, language_code)
-        if existing_summary:
-            return ServiceResponse(data=existing_summary)
+        # Step 2: Fetch the user
+        user = self.user_repo.get_user_by_id(user_id)
+        if not user:
+            return ServiceResponse(error="User not found")
 
-        # Step 3: Fetch the User and Session objects based on the provided IDs
-        user = self.db.query(User).filter_by(user_id=user_id).first()
-        session = self.db.query(UserSession).filter_by(session_id=session_id).first()
-
-        if not user or not session:
-            return ServiceResponse(error="Invalid user or session.")
+        # Step 3: Fetch the language code for the user
+        language_code = user.language_code
+        if not language_code:
+            return ServiceResponse(error="Language code not set for user")
 
         # Step 4: Fetch the transcript from YouTube
         transcript_response = await fetch_youtube_transcript(video_id)
@@ -45,10 +45,13 @@ class SummaryService:
             return ServiceResponse(error=summary_response.error)
         summary_text, input_tokens, output_tokens, summary_model = summary_response.data
 
-        # Step 6: Save the new summary into the database using relationships
+        # Step 6: Session handling is deferred to SessionRepository (not implemented)
+        session = None  # Placeholder until SessionRepository is implemented
+
+        # Step 7: Save the new summary into the database using relationships
         new_summary = self.summary_repo.create_summary(
             user=user,  # Pass the User object
-            session=session,  # Pass the Session object
+            session=session,  # SessionRepo will handle this once implemented
             video_url=video_url,
             video_id=video_id,
             language_code=language_code,

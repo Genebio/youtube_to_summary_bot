@@ -8,8 +8,8 @@ class User(Base):
     
     user_id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String(50), unique=True, nullable=True)
-    first_name = Column(String(100))
-    last_name = Column(String(100))
+    first_name = Column(String(100), nullable=True)
+    last_name = Column(String(100), nullable=True)
     language_code = Column(String(10), default='en')
     current_subscription_status = Column(Boolean, default=False)
     created_at = Column(DateTime, default=get_formatted_time())
@@ -17,5 +17,3 @@ class User(Base):
     # Relationships to other models
     sessions = relationship("Session", back_populates="user")
     summaries = relationship("Summary", back_populates="user")
-    subscription_status_history = relationship("SubscriptionStatus", back_populates="user")
-    costs = relationship("Cost", back_populates="user")

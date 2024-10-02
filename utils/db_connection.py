@@ -32,6 +32,3 @@ def get_db():
         raise e
     finally:
         db.close()
-
-# Create all tables in the database (only run this once during setup)
-Base.metadata.create_all(bind=engine)

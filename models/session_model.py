@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, ForeignKey, DateTime, DECIMAL, Text
 from sqlalchemy.orm import relationship
 from utils.datetime_utils import get_formatted_time
-from .base import Base
+from models.base import Base
 
 class Session(Base):
     __tablename__ = 'sessions'

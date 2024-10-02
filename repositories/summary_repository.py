@@ -2,21 +2,27 @@ from sqlalchemy.orm import Session
 from models.summary_model import Summary
 from models.user_model import User
 from models.session_model import Session as UserSession
+from typing import Optional
 
 
 class SummaryRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def get_summary_by_video_and_language(self, video_id: str, language_code: str):
+    def get_summary_by_video_and_language(self, video_id: str, language_code: str) -> Optional[Summary]:
         """Fetch a summary based on video_id and language_code."""
         return self.db.query(Summary).filter(
             Summary.video_id == video_id,
             Summary.language_code == language_code
         ).first()
 
+    def get_summary_by_id(self, summary_id: int) -> Optional[Summary]:
+        """Fetch a summary based on summary_id."""
+        return self.db.query(Summary).filter(Summary.summary_id == summary_id).first()
+
     def create_summary(self, user: User, session: UserSession, video_url: str, video_id: str, language_code: str,
-                       text_summary: str, input_tokens: int, output_tokens: int, summary_model: str):
+                       text_summary: Optional[str] = None, input_tokens: Optional[int] = None, 
+                       output_tokens: Optional[int] = None, summary_model: Optional[str] = None) -> Summary:
         """Create and save a new summary using relationships for User and Session."""
         new_summary = Summary(
             user=user,  # Pass the User object here
@@ -37,9 +43,9 @@ class SummaryRepository:
         return new_summary
 
     def update_summary_with_tts(self, summary_id: int, requested_audio: bool, got_audio: bool,
-                                tts_model: str = None, tts_tokens: int = 0):
+                                tts_model: Optional[str] = None, tts_tokens: int = 0) -> Optional[Summary]:
         """Update an existing summary with TTS-related information."""
-        summary = self.db.query(Summary).filter(Summary.summary_id == summary_id).first()
+        summary = self.get_summary_by_id(summary_id)
 
         if not summary:
             return None
