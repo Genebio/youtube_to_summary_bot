@@ -43,14 +43,13 @@ class SummaryService:
 
             # Step 3: Fetch the language code - use the provided one if not empty, else default to user's language code
             final_language_code = language_code if language_code else user.language_code
-            if not final_language_code:
-                return self.handle_error(session.session_id, "Language code not set for user")
 
             # Step 4: Fetch the transcript from YouTube
             transcript_response = await fetch_youtube_transcript(video_id)
             if not transcript_response.is_success():
                 return self.handle_error(session.session_id, transcript_response.error)
-            transcript = transcript_response.data
+            transcript = transcript_response.data["transcript"]
+            video_duration = transcript_response.data["video_duration"]
 
             # Step 5: Summarize the transcript using OpenAI API
             summary_response = await summarize_transcript(transcript, OPENAI_CLIENT, final_language_code)
@@ -66,6 +65,7 @@ class SummaryService:
                 video_id=video_id,
                 language_code=final_language_code,
                 text_summary=summary_text,
+                video_duration = video_duration,
                 input_tokens=input_tokens,
                 output_tokens=output_tokens,
                 summary_model=summary_model

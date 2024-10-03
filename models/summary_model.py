@@ -16,6 +16,7 @@ class Summary(Base):
     language_code = Column(String(10), nullable=False)
     
     text_summary = Column(Text)
+    video_duration = Column(Integer, nullable=True)
     input_tokens = Column(Integer)
     output_tokens = Column(Integer)
     summary_model = Column(String(100))

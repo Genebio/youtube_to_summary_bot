@@ -23,7 +23,15 @@ async def fetch_youtube_transcript(video_id: str) -> ServiceResponse:
         if transcript:
             transcript_data = await asyncio.to_thread(transcript.fetch)
             transcript_text = ' '.join([entry['text'] for entry in transcript_data])
-            return ServiceResponse(data=transcript_text)
+            
+            # Get the last transcript entry's start time and duration
+            last_entry = transcript_data[-1]
+            total_duration_seconds = last_entry['start'] + last_entry['duration']  # Use last entry for duration
+                        
+            return ServiceResponse(data={
+                'transcript': transcript_text,
+                'video_duration': total_duration_seconds
+            })
         
         logger.warning(f"No transcript found for video ID: '{video_id}'")
         return ServiceResponse(error="No transcript found")

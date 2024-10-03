@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS summaries (
     video_url VARCHAR(100) NOT NULL,  -- YouTube video URL
     language_code VARCHAR(10),  -- Language code for the summary
     text_summary TEXT,  -- Text summary of the video
+    video_duration INT,  -- Duration of the video in seconds
     input_tokens INT,  -- Number of input tokens
     output_tokens INT,  -- Number of output tokens
     summary_model VARCHAR(100),  -- GPT model used

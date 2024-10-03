@@ -21,8 +21,9 @@ class SummaryRepository:
         return self.db.query(Summary).filter(Summary.summary_id == summary_id).first()
 
     def create_summary(self, user: User, session: UserSession, video_url: str, video_id: str, language_code: str,
-                       text_summary: Optional[str] = None, input_tokens: Optional[int] = None, 
-                       output_tokens: Optional[int] = None, summary_model: Optional[str] = None) -> Summary:
+                       text_summary: Optional[str] = None, video_duration: Optional[int] = None, 
+                       input_tokens: Optional[int] = None, output_tokens: Optional[int] = None,
+                       summary_model: Optional[str] = None) -> Summary:
         """Create and save a new summary using relationships for User and Session."""
         new_summary = Summary(
             user=user,  # Pass the User object here
@@ -31,6 +32,7 @@ class SummaryRepository:
             video_id=video_id,
             language_code=language_code,
             text_summary=text_summary,
+            video_duration=video_duration,
             input_tokens=input_tokens,
             output_tokens=output_tokens,
             summary_model=summary_model,
