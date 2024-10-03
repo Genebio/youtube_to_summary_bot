@@ -11,8 +11,8 @@ class User(Base):
     first_name = Column(String(100), nullable=True)
     last_name = Column(String(100), nullable=True)
     language_code = Column(String(10), default='en')
-    current_subscription_status = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=get_formatted_time())
+    subscription = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=get_formatted_time)
     
     # Relationships to other models
     sessions = relationship("Session", back_populates="user")
