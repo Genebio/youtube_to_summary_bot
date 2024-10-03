@@ -4,8 +4,8 @@ CREATE TABLE users (
     first_name VARCHAR(100),
     last_name VARCHAR(100),
     language_code VARCHAR(10) DEFAULT 'en',
-    current_subscription_status BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    subscription BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP
 );
 
 CREATE TABLE sessions (
@@ -13,8 +13,9 @@ CREATE TABLE sessions (
     user_id INT REFERENCES users(user_id),
     start_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Session start time
     shutdown_time TIMESTAMP,                         -- Session end time
-    ram_usage_mb DECIMAL(10, 2),                     -- RAM usage in MB
-    errors TEXT,                                     -- Any errors during the session
+    ram_usage_mb INT,                                -- RAM usage in MB
+    ram_free_mb INT,                                 -- RAM usage in MB
+    session_end_reason TEXT,                         -- Session end potential reason
     session_duration_sec INT                         -- Session duration in seconds
 );
 

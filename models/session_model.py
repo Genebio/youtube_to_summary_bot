@@ -10,7 +10,8 @@ class Session(Base):
     user_id = Column(Integer, ForeignKey('users.user_id'))
     start_time = Column(DateTime, default=get_formatted_time)
     shutdown_time = Column(DateTime)
-    ram_usage_mb = Column(DECIMAL(10, 2))
+    ram_usage_mb = Column(Integer)
+    ram_free_mb = Column(Integer)
     session_end_reason = Column(Text)
     session_duration_sec = Column(Integer)
     

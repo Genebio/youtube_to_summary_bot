@@ -76,6 +76,8 @@ protobuf==5.28.0
     #   grpc-google-iam-v1
     #   grpcio-status
     #   proto-plus
+psutil==6.0.0
+    # via -r requirements.in
 psycopg2-binary==2.9.9
     # via -r requirements.in
 pyasn1==0.6.0
