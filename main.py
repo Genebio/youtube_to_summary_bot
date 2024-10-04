@@ -4,9 +4,8 @@ from fastapi import FastAPI, Request
 from telegram import Update
 from telegram.ext import (
     Application, CommandHandler, MessageHandler, CallbackQueryHandler, filters, PicklePersistence
-)
+    )
 from tenacity import retry, stop_after_attempt, wait_fixed
-from contextlib import asynccontextmanager
 
 from utils.logger import logger
 from config.config import TOKEN
@@ -14,64 +13,53 @@ from handlers.transcript_handler import handle_video_link
 from handlers.command_menu import start
 from handlers.summary_handler import convert_to_audio_callback
 
-# Add the /app directory to sys.path
+# Add the /app directory to sys.path so Python can find utils, apis, handlers, etc.
 sys.path.append('/app')
 
 # Initialize FastAPI app
 app = FastAPI()
 
-# Global variables
-http_client = None
-telegram_application = None
+# Initialize the global HTTP client with connection pooling
+http_client = httpx.AsyncClient()
 
-# Lifespan context manager for app startup and shutdown events
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    global http_client, telegram_application
-    
-    # Startup: Initialize HTTP client
-    http_client = httpx.AsyncClient()
-    
-    # Initialize Telegram application
-    persistence = PicklePersistence(filepath='bot_data.pkl')
-    telegram_application = (
-        Application.builder()
-        .token(TOKEN)
-        .persistence(persistence)
-        .build()
-    )
-    
-    # Register handlers
-    telegram_application.add_handler(CommandHandler("start", start))
-    telegram_application.add_handler(MessageHandler(filters.Entity("url"), handle_video_link))
-    telegram_application.add_handler(
-        CallbackQueryHandler(convert_to_audio_callback, pattern='convert_to_audio')
-    )
-    
-    try:
-        # Initialize bot without starting webhook
-        await telegram_application.initialize()
-        logger.info("Telegram application initialized successfully.")
-        yield
-    finally:
-        # Shutdown
-        if telegram_application:
-            await telegram_application.shutdown()
-            logger.info("Telegram application shut down successfully.")
+# Use a pickle-based persistence object
+persistence = PicklePersistence(filepath='bot_data.pkl')
+
+# Create Telegram application (bot) instance
+telegram_application = Application.builder().token(TOKEN).persistence(persistence).build()
+
+# Register bot handlers, including the callback handler for inline buttons
+def register_handlers(application):
+    """Register all command and callback handlers."""
+    # Register start command and video link message handlers
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(MessageHandler(filters.Entity("url"), handle_video_link))
+
+    # Register the callback query handler for 'convert_to_audio'
+    application.add_handler(CallbackQueryHandler(convert_to_audio_callback, pattern='convert_to_audio'))
+
+# Call the function to register handlers
+register_handlers(telegram_application)
+
+# Clean up the HTTP connection pool on shutdown
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Ensure connection pool and Telegram application are closed on shutdown."""
+    # Check if the Telegram application is running before stopping it
+    if telegram_application.running:
+        await telegram_application.stop()
+        logger.info("Telegram application stopped successfully.")
+    else:
+        logger.info("Telegram application was not running.")
         
-        if http_client:
-            await http_client.aclose()
-            logger.info("HTTP client closed.")
+    # Close the HTTP client connection
+    await http_client.aclose()
+    logger.info("HTTP client closed.")
 
-# Add lifespan handler to FastAPI
-app = FastAPI(lifespan=lifespan)
-
+# Retry configuration: Retry up to 3 times with a 2-second wait in between attempts
 @retry(stop=stop_after_attempt(3), wait=wait_fixed(2))
 async def fetch_data_with_retries(url: str):
     """Fetch data from a URL with retries."""
-    if not http_client:
-        raise RuntimeError("HTTP client not initialized")
-        
     try:
         response = await http_client.get(url)
         response.raise_for_status()
@@ -83,18 +71,28 @@ async def fetch_data_with_retries(url: str):
         logger.error(f"Error response {e.response.status_code} while requesting {url}: {str(e)}")
         raise
 
+# Initialize Telegram bot application
+async def initialize_application():
+    """Ensure the Telegram application is initialized properly."""
+    try:
+        await telegram_application.initialize()
+        logger.info("Telegram application initialized successfully.")
+    except Exception as e:
+        logger.error(f"Error initializing Telegram application: {str(e)}")
+        raise
+
+# Process the incoming update from Telegram
 async def process_telegram_update(update_data):
     """Asynchronously process the Telegram update."""
-    if not telegram_application:
-        raise RuntimeError("Telegram application not initialized")
-        
     try:
         update = Update.de_json(update_data, telegram_application.bot)
+        await initialize_application()
         await telegram_application.process_update(update)
     except Exception as e:
         logger.error(f"Error processing Telegram update: {str(e)}, Update Data: {update_data}")
         raise
 
+# FastAPI webhook to handle incoming Telegram updates
 @app.post("/webhook")
 async def telegram_webhook(request: Request):
     """Handle incoming webhook requests from Telegram."""

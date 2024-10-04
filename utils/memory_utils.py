@@ -9,7 +9,7 @@ def get_current_ram_usage() -> int:
     mem_info = process.memory_info()
     return int(mem_info.rss / (1024 * 1024))  # Convert from bytes to MB and return as an integer
 
-def get_free_ram_left() -> int:
+def get_ram_free_mb() -> int:
     """
     Get the amount of free RAM left in MB as an integer (whole number).
     """
