@@ -4,7 +4,7 @@ from fastapi import FastAPI, Request
 from telegram import Update
 from telegram.ext import (
     Application, CommandHandler, MessageHandler, CallbackQueryHandler, filters, PicklePersistence
-    )
+)
 from tenacity import retry, stop_after_attempt, wait_fixed
 from contextlib import asynccontextmanager
 
@@ -45,7 +45,8 @@ async def lifespan(app: FastAPI):
     # Startup logic (e.g., initializing Telegram bot)
     try:
         await telegram_application.initialize()
-        logger.info("Telegram application initialized successfully.")
+        await telegram_application.start()  # Start webhook
+        logger.info("Telegram application initialized and started successfully.")
         yield  # This is where the app runs
     finally:
         # Shutdown logic (closing Telegram app and HTTP client)
@@ -77,22 +78,11 @@ async def fetch_data_with_retries(url: str):
         logger.error(f"Error response {e.response.status_code} while requesting {url}: {str(e)}")
         raise
 
-# Initialize Telegram bot application
-async def initialize_application():
-    """Ensure the Telegram application is initialized properly."""
-    try:
-        await telegram_application.initialize()
-        logger.info("Telegram application initialized successfully.")
-    except Exception as e:
-        logger.error(f"Error initializing Telegram application: {str(e)}")
-        raise
-
 # Process the incoming update from Telegram
 async def process_telegram_update(update_data):
     """Asynchronously process the Telegram update."""
     try:
         update = Update.de_json(update_data, telegram_application.bot)
-        await initialize_application()
         await telegram_application.process_update(update)
     except Exception as e:
         logger.error(f"Error processing Telegram update: {str(e)}, Update Data: {update_data}")

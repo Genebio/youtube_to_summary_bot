@@ -20,7 +20,7 @@ locales = {
                     "or staying informed on\\-the\\-go\\. Try now \\- send a link and see how fast it is!"
                 ),
         "start_msg": "🚀 Ready to start? Send a YouTube link to get your summary in seconds!",
-        'no_transcript_err': "⚠️ Sorry, we can't get insights from this video. Try another one? 🎥",
+        'no_content_err': "⚠️ Sorry, we can't get insights from this video. Try another one? 🎥",
         'no_valid_link_err': "⚠️ Oops! That doesn't seem like a valid YouTube link. Please double-check and try again. 😊",
         'summary_msg': "✅ Extracting key insights for you... 🎯",
         'audio_button': "🔊 Audio",
@@ -48,7 +48,7 @@ locales = {
                     "или получения информации на ходу\\. Попробуйте сейчас \\- отправьте ссылку и увидите, как это быстро!"
                 ),
         "start_msg": "🚀 Готовы начать? Отправьте ссылку на YouTube и получите конспект видео за секунды!",
-        'no_transcript_err': "⚠️ К сожалению, мы не можем получить данные из этого видео. Попробуйте другое? 🎥",
+        'no_content_err': "⚠️ К сожалению, мы не можем получить данные из этого видео. Попробуйте другое? 🎥",
         'no_valid_link_err': "⚠️ Ой! Это не похоже на действительную ссылку YouTube. Пожалуйста, проверьте и попробуйте снова. 😊",
         'summary_msg': "✅ Извлекаем ключевые моменты для вас... 🎯",
         'audio_button': "🔊 Аудио",
@@ -76,7 +76,7 @@ locales = {
             "або інфармавання на хаду\\. Паспрабуйце зараз \\- адпраўце спасылку і пераканайцеся, як хутка гэта працуе\\!"
         ),
         "start_msg": "🚀 Гатовы пачаць? Дашліце спасылку на YouTube відэа, і мы створым рэзюмэ за некалькі секунд!",
-        "no_transcript_err": "⚠️ Прабачце, мы не можам атрымаць інфармацыю з гэтага відэа. Паспрабуем іншае? 🎥",
+        "no_content_err": "⚠️ Прабачце, мы не можам атрымаць інфармацыю з гэтага відэа. Паспрабуем іншае? 🎥",
         "no_valid_link_err": "⚠️ Ой! Гэта не падобна на сапраўдную спасылку YouTube. Калі ласка, праверце і паспрабуйце зноў. 😊",
         "summary_msg": "✅ Вылучаем ключавыя ідэі для вас... 🎯",
         "audio_button": "🔊 Аўдыё",
@@ -104,7 +104,7 @@ locales = {
             "o mantenir\\-te informat en moviment\\. Prova\\-ho ara \\- envia un enllaç i comprova com n'és de ràpid\\!"
         ),
         "start_msg": "🚀 A punt per començar? Envia un enllaç de YouTube i obtindràs el teu resum en segons!",
-        "no_transcript_err": "⚠️ Ho sentim, no podem obtenir informació d'aquest vídeo. Vols provar-ne un altre? 🎥",
+        "no_content_err": "⚠️ Ho sentim, no podem obtenir informació d'aquest vídeo. Vols provar-ne un altre? 🎥",
         "no_valid_link_err": "⚠️ Vaja! Això no sembla un enllaç vàlid de YouTube. Si us plau, comprova'l i torna-ho a provar. 😊",
         "summary_msg": "✅ Extraient les idees clau per a tu... 🎯",
         "audio_button": "🔊 Àudio",
@@ -132,7 +132,7 @@ locales = {
                     "ili informiranje u pokretu\\. Pokušajte sada \\- pošaljite link i uvjerite se koliko je brzo!"
                 ),
         "start_msg": "🚀 Spremni za početak? Pošaljite YouTube link i dobit ćete sažetak za nekoliko sekundi!",
-        'no_transcript_err': "⚠️ Žao nam je, ne možemo izvući uvid iz ovog videa. Želite li pokušati s drugim? 🎥",
+        'no_content_err': "⚠️ Žao nam je, ne možemo izvući uvid iz ovog videa. Želite li pokušati s drugim? 🎥",
         'no_valid_link_err': "⚠️ Ups! Čini se da to nije ispravan YouTube link. Molimo provjerite i pokušajte ponovno. 😊",
         'summary_msg': "✅ Izvlačimo ključne uvide za vas... 🎯",
         'audio_button': "🔊 Audio",
@@ -160,7 +160,7 @@ locales = {
                     "of op de hoogte blijven onderweg\\. Probeer het nu \\- stuur een link en zie hoe snel het werkt!"
                 ),
         "start_msg": "🚀 Klaar om te beginnen? Stuur een YouTube-link en ontvang je samenvatting in seconden!",
-        'no_transcript_err': "⚠️ Sorry, we kunnen geen inzichten uit deze video halen. Probeer een andere? 🎥",
+        'no_content_err': "⚠️ Sorry, we kunnen geen inzichten uit deze video halen. Probeer een andere? 🎥",
         'no_valid_link_err': "⚠️ Oeps! Dat lijkt geen geldige YouTube-link te zijn. Controleer het en probeer opnieuw. 😊",
         'summary_msg': "✅ Belangrijke inzichten voor je aan het extraheren... 🎯",
         'audio_button': "🔊 Audio",
@@ -188,7 +188,7 @@ locales = {
                     "ou rester informé en déplacement\\. Essayez maintenant \\- envoyez un lien et voyez à quelle vitesse c'est fait!"
                 ),
         "start_msg": "🚀 Prêt à commencer ? Envoyez un lien YouTube et obtenez votre résumé en quelques secondes !",
-        'no_transcript_err': "⚠️ Désolé, nous ne pouvons pas obtenir d'informations à partir de cette vidéo. Essayer une autre ? 🎥",
+        'no_content_err': "⚠️ Désolé, nous ne pouvons pas obtenir d'informations à partir de cette vidéo. Essayer une autre ? 🎥",
         'no_valid_link_err': "⚠️ Oups ! Cela ne semble pas être un lien YouTube valide. Veuillez vérifier et réessayer. 😊",
         'summary_msg': "✅ Extraction des informations clés en cours... 🎯",
         'audio_button': "🔊 Audio",
@@ -216,7 +216,7 @@ locales = {
                     "oder um unterwegs informiert zu bleiben\\. Probieren Sie es jetzt aus \\- senden Sie einen Link und sehen Sie, wie schnell es geht!"
                 ),
         "start_msg": "🚀 Bereit loszulegen? Senden Sie einen YouTube-Link und erhalten Sie Ihre Zusammenfassung in Sekunden!",
-        'no_transcript_err': "⚠️ Leider können wir aus diesem Video keine Informationen extrahieren. Möchten Sie ein anderes ausprobieren? 🎥",
+        'no_content_err': "⚠️ Leider können wir aus diesem Video keine Informationen extrahieren. Möchten Sie ein anderes ausprobieren? 🎥",
         'no_valid_link_err': "⚠️ Oops! Das scheint kein gültiger YouTube-Link zu sein. Bitte überprüfen Sie ihn und versuchen Sie es erneut. 😊",
         'summary_msg': "✅ Wir extrahieren wichtige Erkenntnisse für Sie... 🎯",
         'audio_button': "🔊 Audio",
@@ -244,7 +244,7 @@ locales = {
                     "או להתעדכן תוך כדי תנועה\\. נסו עכשיו \\- שלחו קישור ותראו כמה מהר זה עובד!"
                 ),
         "start_msg": "🚀 מוכנים להתחיל? שלחו קישור YouTube ותקבלו סיכום תוך שניות!",
-        'no_transcript_err': "⚠️ מצטערים, לא הצלחנו להפיק מידע מהסרטון הזה. רוצים לנסות סרטון אחר? 🎥",
+        'no_content_err': "⚠️ מצטערים, לא הצלחנו להפיק מידע מהסרטון הזה. רוצים לנסות סרטון אחר? 🎥",
         'no_valid_link_err': "⚠️ אופס! זה לא נראה כמו קישור YouTube תקין. בבקשה בדקו ונסו שוב. 😊",
         'summary_msg': "✅ מוציאים עבורך את התובנות המרכזיות... 🎯",
         'audio_button': "🔊 אודיו",
@@ -272,7 +272,7 @@ locales = {
                     "o per restare aggiornato mentre sei in movimento\\. Prova subito \\- invia un link e scopri quanto è veloce!"
                 ),
         "start_msg": "🚀 Pronto per iniziare? Invia un link di YouTube e ricevi il tuo riassunto in pochi secondi!",
-        'no_transcript_err': "⚠️ Ci dispiace, non possiamo ottenere informazioni da questo video. Vuoi provare un altro? 🎥",
+        'no_content_err': "⚠️ Ci dispiace, non possiamo ottenere informazioni da questo video. Vuoi provare un altro? 🎥",
         'no_valid_link_err': "⚠️ Oops! Sembra che questo non sia un link di YouTube valido. Controllalo e riprova. 😊",
         'summary_msg': "✅ Stiamo estraendo le informazioni principali per te... 🎯",
         'audio_button': "🔊 Audio",
@@ -300,7 +300,7 @@ locales = {
                     "немесе жолда жүргенде ақпарат алу үшін өте қолайлы\\. Қазір байқап көріңіз \\- сілтемені жіберіңіз және қаншалықты жылдам екенін көріңіз!"
                 ),
         "start_msg": "🚀 Бастауға дайынсыз ба? Қысқаша мазмұн алу үшін YouTube сілтемесін жіберіңіз!",
-        'no_transcript_err': "⚠️ Кешіріңіз, біз бұл бейнеден ақпарат ала алмаймыз. Басқа бейнені көріп көресіз бе? 🎥",
+        'no_content_err': "⚠️ Кешіріңіз, біз бұл бейнеден ақпарат ала алмаймыз. Басқа бейнені көріп көресіз бе? 🎥",
         'no_valid_link_err': "⚠️ Ой, бұл жарамды YouTube сілтемесі емес сияқты. Қайта тексеріп, қайталап көріңіз. 😊",
         'summary_msg': "✅ Сіздің негізгі ақпараттарыңызды шығарып жатырмыз... 🎯",
         'audio_button': "🔊 Аудио",
@@ -328,7 +328,7 @@ locales = {
                     "atau kekal maklum semasa dalam perjalanan\\. Cuba sekarang \\- hantar pautan dan lihat betapa cepatnya!"
                 ),
         "start_msg": "🚀 Sedia untuk bermula? Hantar pautan YouTube untuk mendapatkan ringkasan anda dalam beberapa saat!",
-        'no_transcript_err': "⚠️ Maaf, kami tidak dapat mendapatkan maklumat daripada video ini. Cuba video lain? 🎥",
+        'no_content_err': "⚠️ Maaf, kami tidak dapat mendapatkan maklumat daripada video ini. Cuba video lain? 🎥",
         'no_valid_link_err': "⚠️ Opps! Nampaknya itu bukan pautan YouTube yang sah. Sila semak dan cuba lagi. 😊",
         'summary_msg': "✅ Sedang mengekstrak maklumat penting untuk anda... 🎯",
         'audio_button': "🔊 Audio",
@@ -356,7 +356,7 @@ locales = {
                     "lub bycia na bieżąco w podróży\\. Wypróbuj teraz \\- wyślij link i zobacz, jak szybko to działa!"
                 ),
         "start_msg": "🚀 Gotowy, aby zacząć? Wyślij link z YouTube i otrzymaj streszczenie w kilka sekund!",
-        'no_transcript_err': "⚠️ Przykro nam, nie możemy uzyskać informacji z tego filmu. Spróbuj innego? 🎥",
+        'no_content_err': "⚠️ Przykro nam, nie możemy uzyskać informacji z tego filmu. Spróbuj innego? 🎥",
         'no_valid_link_err': "⚠️ Oops! To nie wydaje się być prawidłowym linkiem do YouTube. Sprawdź jeszcze raz i spróbuj ponownie. 😊",
         'summary_msg': "✅ Wyciągamy kluczowe informacje dla Ciebie... 🎯",
         'audio_button': "🔊 Audio",
@@ -384,7 +384,7 @@ locales = {
                     "ou para se manter informado enquanto está em movimento\\. Experimente agora \\- envie um link e veja a rapidez!"
                 ),
         "start_msg": "🚀 Pronto para começar? Envie um link do YouTube e receba seu resumo em segundos!",
-        'no_transcript_err': "⚠️ Desculpe, não conseguimos obter informações deste vídeo. Quer tentar outro? 🎥",
+        'no_content_err': "⚠️ Desculpe, não conseguimos obter informações deste vídeo. Quer tentar outro? 🎥",
         'no_valid_link_err': "⚠️ Opa! Parece que esse não é um link válido do YouTube. Verifique e tente novamente. 😊",
         'summary_msg': "✅ Extraindo as informações principais para você... 🎯",
         'audio_button': "🔊 Áudio",
@@ -412,7 +412,7 @@ locales = {
                     "или информисање у покрету\\. Пробајте сада \\- пошаљите линк и видите колико је брзо!"
                 ),
         "start_msg": "🚀 Спремни за почетак? Пошаљите YouTube линк и добићете резиме за неколико секунди!",
-        'no_transcript_err': "⚠️ Жао нам је, не можемо добити информације из овог видеа. Пробајте други? 🎥",
+        'no_content_err': "⚠️ Жао нам је, не можемо добити информације из овог видеа. Пробајте други? 🎥",
         'no_valid_link_err': "⚠️ Оопс! Ово не изгледа као важећи YouTube линк. Проверите и покушајте поново. 😊",
         'summary_msg': "✅ Извлачимо кључне информације за вас... 🎯",
         'audio_button': "🔊 Аудио",
@@ -440,7 +440,7 @@ locales = {
                     "o mantenerse informado en movimiento\\. ¡Prueba ahora \\- envía un enlace y comprueba qué tan rápido es!"
                 ),
         "start_msg": "🚀 ¿Listo para empezar? Envía un enlace de YouTube y obtén tu resumen en segundos!",
-        'no_transcript_err': "⚠️ Lo siento, no podemos obtener información de este video. ¿Quieres intentar con otro? 🎥",
+        'no_content_err': "⚠️ Lo siento, no podemos obtener información de este video. ¿Quieres intentar con otro? 🎥",
         'no_valid_link_err': "⚠️ ¡Ups! Parece que ese no es un enlace válido de YouTube. Revisa y vuelve a intentarlo. 😊",
         'summary_msg': "✅ Extrayendo los puntos clave para ti... 🎯",
         'audio_button': "🔊 Audio",
@@ -468,7 +468,7 @@ locales = {
                     "veya hareket halindeyken bilgilenmek için idealdir\\. Şimdi deneyin \\- bir link gönderin ve ne kadar hızlı olduğunu görün!"
                 ),
         "start_msg": "🚀 Başlamaya hazır mısınız? YouTube linkini gönderin ve özetinizi birkaç saniyede alın!",
-        'no_transcript_err': "⚠️ Üzgünüz, bu videodan bilgi alamıyoruz. Başka bir tane deneyin? 🎥",
+        'no_content_err': "⚠️ Üzgünüz, bu videodan bilgi alamıyoruz. Başka bir tane deneyin? 🎥",
         'no_valid_link_err': "⚠️ Hata! Bu geçerli bir YouTube linki gibi görünmüyor. Lütfen kontrol edip tekrar deneyin. 😊",
         'summary_msg': "✅ Sizin için anahtar bilgileri çıkarıyoruz... 🎯",
         'audio_button': "🔊 Sesli",
@@ -496,7 +496,7 @@ locales = {
                     "або отримання інформації на ходу\\. Спробуйте зараз \\- надішліть посилання та побачте, як це швидко!"
                 ),
         "start_msg": "🚀 Готові почати? Надішліть посилання на YouTube і отримайте огляд за кілька секунд!",
-        'no_transcript_err': "⚠️ Вибачте, ми не можемо отримати інформацію з цього відео. Спробуєте інше? 🎥",
+        'no_content_err': "⚠️ Вибачте, ми не можемо отримати інформацію з цього відео. Спробуєте інше? 🎥",
         'no_valid_link_err': "⚠️ Упс! Це не схоже на дійсне посилання на YouTube. Будь ласка, перевірте й спробуйте ще раз. 😊",
         'summary_msg': "✅ Витягуємо ключову інформацію для вас... 🎯",
         'audio_button': "🔊 Аудіо",
@@ -524,7 +524,7 @@ locales = {
                     "أو البقاء على اطلاع أثناء التنقل\\. جرب الآن \\- أرسل رابطًا وشاهد مدى السرعة!"
                 ),
         "start_msg": "🚀 جاهز للبدء؟ أرسل رابط YouTube للحصول على ملخصك في ثوانٍ!",
-        'no_transcript_err': "⚠️ عذرًا، لا يمكننا استخراج المعلومات من هذا الفيديو. هل تريد تجربة فيديو آخر؟ 🎥",
+        'no_content_err': "⚠️ عذرًا، لا يمكننا استخراج المعلومات من هذا الفيديو. هل تريد تجربة فيديو آخر؟ 🎥",
         'no_valid_link_err': "⚠️ عذرًا! يبدو أن هذا ليس رابط YouTube صالحًا. يرجى التحقق والمحاولة مرة أخرى. 😊",
         'summary_msg': "✅ جاري استخراج المعلومات الأساسية لك... 🎯",
         'audio_button': "🔊 الصوت",
@@ -552,7 +552,7 @@ locales = {
                     "nebo udržování informací na cestách\\. Vyzkoušejte nyní \\- pošlete odkaz a uvidíte, jak rychle to funguje!"
                 ),
         "start_msg": "🚀 Připraveni začít? Pošlete odkaz na YouTube a získejte svůj souhrn za pár sekund!",
-        'no_transcript_err': "⚠️ Je nám líto, nemůžeme získat informace z tohoto videa. Zkusíte jiné? 🎥",
+        'no_content_err': "⚠️ Je nám líto, nemůžeme získat informace z tohoto videa. Zkusíte jiné? 🎥",
         'no_valid_link_err': "⚠️ Oops! Toto nevypadá jako platný odkaz na YouTube. Zkontrolujte to prosím a zkuste to znovu. 😊",
         'summary_msg': "✅ Získáváme pro vás klíčové informace... 🎯",
         'audio_button': "🔊 Audio",
@@ -580,7 +580,7 @@ locales = {
                     "tai tiedon hankintaan liikkeellä\\. Kokeile nyt \\- lähetä linkki ja näe, kuinka nopeasti se toimii!"
                 ),
         "start_msg": "🚀 Valmis aloittamaan? Lähetä YouTube-linkki ja saat yhteenvedon sekunneissa!",
-        'no_transcript_err': "⚠️ Pahoittelemme, emme voi saada tietoja tästä videosta. Haluatko kokeilla toista? 🎥",
+        'no_content_err': "⚠️ Pahoittelemme, emme voi saada tietoja tästä videosta. Haluatko kokeilla toista? 🎥",
         'no_valid_link_err': "⚠️ Oho! Tämä ei vaikuta kelvolliselta YouTube-linkiltä. Tarkista ja yritä uudelleen. 😊",
         'summary_msg': "✅ Poimimme keskeisiä tietoja sinulle... 🎯",
         'audio_button': "🔊 Ääni",
@@ -608,7 +608,7 @@ locales = {
                     "vagy tájékozódáshoz útközben\\. Próbáld ki most \\- küldj egy linket, és nézd meg, milyen gyors!"
                 ),
         "start_msg": "🚀 Készen állsz a kezdésre? Küldj egy YouTube-linket, és kapd meg az összefoglalót másodpercek alatt!",
-        'no_transcript_err': "⚠️ Sajnáljuk, nem sikerült információt nyernünk ebből a videóból. Kipróbálsz egy másikat? 🎥",
+        'no_content_err': "⚠️ Sajnáljuk, nem sikerült információt nyernünk ebből a videóból. Kipróbálsz egy másikat? 🎥",
         'no_valid_link_err': "⚠️ Hoppá! Ez nem tűnik érvényes YouTube-linknek. Kérlek, ellenőrizd, és próbáld újra. 😊",
         'summary_msg': "✅ Kiemeljük a legfontosabb információkat... 🎯",
         'audio_button': "🔊 Hang",
@@ -636,7 +636,7 @@ locales = {
                     "atau tetap terinformasi saat bepergian\\. Coba sekarang \\- kirim tautan dan lihat seberapa cepatnya!"
                 ),
         "start_msg": "🚀 Siap memulai? Kirim tautan YouTube untuk mendapatkan ringkasan Anda dalam hitungan detik!",
-        'no_transcript_err': "⚠️ Maaf, kami tidak bisa mendapatkan informasi dari video ini. Coba yang lain? 🎥",
+        'no_content_err': "⚠️ Maaf, kami tidak bisa mendapatkan informasi dari video ini. Coba yang lain? 🎥",
         'no_valid_link_err': "⚠️ Oops! Itu tidak terlihat seperti tautan YouTube yang valid. Silakan periksa dan coba lagi. 😊",
         'summary_msg': "✅ Mengekstrak informasi penting untuk Anda... 🎯",
         'audio_button': "🔊 Audio",
@@ -663,7 +663,7 @@ locales = {
                     "어디서든 영상을 즉시 이해하세요\\. 연구, 학습 또는 이동 중 정보를 얻기에 이상적입니다\\. 지금 사용해보세요 \\- 링크를 보내고 얼마나 빠른지 확인해보세요!"
                 ),
         "start_msg": "🚀 시작할 준비가 되셨나요? YouTube 링크를 보내면 몇 초 안에 요약을 받아보세요!",
-        'no_transcript_err': "⚠️ 죄송합니다, 이 영상에서 정보를 얻을 수 없습니다. 다른 영상을 시도해보시겠어요? 🎥",
+        'no_content_err': "⚠️ 죄송합니다, 이 영상에서 정보를 얻을 수 없습니다. 다른 영상을 시도해보시겠어요? 🎥",
         'no_valid_link_err': "⚠️ 어라! 이건 유효한 YouTube 링크가 아닌 것 같아요. 다시 확인하고 시도해보세요. 😊",
         'summary_msg': "✅ 핵심 정보를 추출 중입니다... 🎯",
         'audio_button': "🔊 오디오",
@@ -691,7 +691,7 @@ locales = {
                     "eller for å holde seg oppdatert på farten\\. Prøv nå \\- send en lenke og se hvor raskt det går!"
                 ),
         "start_msg": "🚀 Klar til å starte? Send en YouTube-lenke for å få sammendraget ditt på sekunder!",
-        'no_transcript_err': "⚠️ Beklager, vi kan ikke hente informasjon fra denne videoen. Prøv en annen? 🎥",
+        'no_content_err': "⚠️ Beklager, vi kan ikke hente informasjon fra denne videoen. Prøv en annen? 🎥",
         'no_valid_link_err': "⚠️ Oi! Det ser ikke ut som en gyldig YouTube-lenke. Sjekk og prøv igjen. 😊",
         'summary_msg': "✅ Vi henter nøkkelinformasjon for deg... 🎯",
         'audio_button': "🔊 Lyd",
@@ -719,7 +719,7 @@ locales = {
                     "یا به‌روز ماندن در حرکت\\. همین حالا امتحان کنید \\- یک لینک ارسال کنید و سرعت آن را ببینید!"
                 ),
         "start_msg": "🚀 آماده‌اید شروع کنید؟ یک لینک YouTube ارسال کنید و خلاصه خود را در چند ثانیه دریافت کنید!",
-        'no_transcript_err': "⚠️ متاسفیم، نمی‌توانیم از این ویدئو اطلاعات استخراج کنیم. ویدئوی دیگری امتحان کنید؟ 🎥",
+        'no_content_err': "⚠️ متاسفیم، نمی‌توانیم از این ویدئو اطلاعات استخراج کنیم. ویدئوی دیگری امتحان کنید؟ 🎥",
         'no_valid_link_err': "⚠️ اوه! به نظر نمی‌رسد که این یک لینک معتبر YouTube باشد. لطفاً بررسی کرده و دوباره تلاش کنید. 😊",
         'summary_msg': "✅ در حال استخراج نکات کلیدی برای شما... 🎯",
         'audio_button': "🔊 صوت",
@@ -747,7 +747,7 @@ locales = {
                     "alebo informovanosť na cestách\\. Vyskúšajte teraz \\- pošlite odkaz a uvidíte, ako rýchlo to funguje!"
                 ),
         "start_msg": "🚀 Pripravení začať? Pošlite odkaz na YouTube a získajte zhrnutie za pár sekúnd!",
-        'no_transcript_err': "⚠️ Je nám ľúto, nemôžeme získať informácie z tohto videa. Skúsiť iné? 🎥",
+        'no_content_err': "⚠️ Je nám ľúto, nemôžeme získať informácie z tohto videa. Skúsiť iné? 🎥",
         'no_valid_link_err': "⚠️ Oops! Toto sa nezdá ako platný YouTube odkaz. Skontrolujte to prosím a skúste znova. 😊",
         'summary_msg': "✅ Extrahujeme kľúčové informácie pre vás... 🎯",
         'audio_button': "🔊 Zvuk",
@@ -775,7 +775,7 @@ locales = {
                     "eller för att hålla dig informerad när du är på språng\\. Prova nu \\- skicka en länk och se hur snabbt det går!"
                 ),
         "start_msg": "🚀 Redo att börja? Skicka en YouTube-länk och få din sammanfattning på några sekunder!",
-        'no_transcript_err': "⚠️ Tyvärr, vi kan inte få fram information från den här videon. Vill du prova en annan? 🎥",
+        'no_content_err': "⚠️ Tyvärr, vi kan inte få fram information från den här videon. Vill du prova en annan? 🎥",
         'no_valid_link_err': "⚠️ Oj! Det verkar inte vara en giltig YouTube-länk. Kontrollera och försök igen. 😊",
         'summary_msg': "✅ Extraherar viktiga insikter åt dig... 🎯",
         'audio_button': "🔊 Ljud",
@@ -803,7 +803,7 @@ locales = {
                     "yo‘lda xabardor bo‘lish uchun juda mos\\. Endi sinab ko‘ring \\- havolani yuboring va tezligini ko‘ring!"
                 ),
         "start_msg": "🚀 Boshlashga tayyormisiz? YouTube havolasini yuboring va qisqacha mazmuningizni bir necha soniyada oling!",
-        'no_transcript_err': "⚠️ Kechirasiz, ushbu videodan ma’lumot olib bo‘lmaydi. Yana birini sinab ko‘rasizmi? 🎥",
+        'no_content_err': "⚠️ Kechirasiz, ushbu videodan ma’lumot olib bo‘lmaydi. Yana birini sinab ko‘rasizmi? 🎥",
         'no_valid_link_err': "⚠️ Oops! Bu haqiqiy YouTube havolasi emasga o‘xshaydi. Iltimos, tekshirib qayta urinib ko‘ring. 😊",
         'summary_msg': "✅ Siz uchun asosiy ma’lumotlarni chiqarib olmoqdamiz... 🎯",
         'audio_button': "🔊 Audio",

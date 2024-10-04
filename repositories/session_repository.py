@@ -26,15 +26,11 @@ class SessionRepository:
         self.db.refresh(new_session)  # Populate the session_id
         return new_session
 
-    def end_session(self, session_id: int, end_reason: str) -> Optional[UserSession]:
+    def end_session(self, session: UserSession, end_reason: str) -> Optional[UserSession]:
         """
         End a session by updating the shutdown time, session duration, and reason for session termination.
         Track RAM used during the session and free RAM left.
         """
-        session = self.get_session_by_id(session_id)
-        if not session:
-            return None
-
         # Capture the final RAM usage at the end of the session
         final_ram_usage = get_current_ram_usage()
 

@@ -1,40 +1,78 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-from apis.openai_summary_api import summarize_transcript
-from config.config import OPENAI_CLIENT
-from handlers.speech_handler import handle_speech_conversion
-from utils.formatter import clean_markdown_symbols
+from repositories.user_repository import UserRepository
+from services.summary_service import SummaryService
 from utils.localizer import get_localized_message
+from utils.db_connection import get_db
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram.ext import CallbackContext
+from handlers.speech_handler import handle_audio_request
 
 
-async def handle_summary_request(update, context):
-    """Handles summarization of the transcript."""
-    user_language = update.effective_user.language_code if update.effective_user.language_code else 'en'
-    summary_msg = get_localized_message(user_language, "summary_msg")
-    await context.bot.send_message(chat_id=update.message.chat_id, text=summary_msg)
-    
-    transcript = context.user_data.pop('transcript', None)
-    
-    # Call the OpenAI API to summarize the transcript
-    summary = await summarize_transcript(transcript, OPENAI_CLIENT, user_language)
-    plain_text_summary = clean_markdown_symbols(summary)
+async def handle_summary_request(update: Update, context: CallbackContext):
+    """
+    Handles the summary request after the transcript has been fetched.
+    """
+    user_language = context.user_data['user_language']
+    transcript = context.user_data['transcript']
+    video_id = context.user_data['video_id']
+    video_duration = context.user_data['video_duration']
+    session = context.user_data['session']
 
-    audio_button = get_localized_message(user_language, "audio_button")
-    keyboard = [[InlineKeyboardButton(audio_button, callback_data="convert_to_audio")]]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-  
-    # Send a summary with the inline button
-    await context.bot.send_message(
-        chat_id=update.message.chat_id,
-        text=plain_text_summary,
-        reply_markup=reply_markup
-    )
-    
-    # Store the summary in user data to pass to the speech handler
-    context.user_data['summary'] = plain_text_summary
+    # if not transcript or not video_id or not session: # TODO: logger.error
+
+    # Get a DB session
+    db = next(get_db())
+
+    # Initialize the repositories and services
+    summary_service = SummaryService(db)
+
+    try:
+        await update.message.reply_text(get_localized_message(user_language, "summary_msg"))
+
+        # Step 1: Summarize the transcript
+        summary_response = await summary_service.summarize_transcript(
+            transcript=transcript,
+            video_url=context.user_data['video_url'],
+            video_id=video_id,
+            video_duration=video_duration,
+            user=context.user_data['user'],
+            session=session,
+            language_code=user_language
+        )
+
+        # Step 2: Check if the summary was generated successfully
+        if not summary_response.is_success():
+            await update.message.reply_text(get_localized_message(user_language, "no_content_err"))
+            return
+
+        # Step 3: Get the plain text summary
+        plain_text_summary = summary_response.data.text_summary
+
+        # Step 4: Add an inline button to trigger the audio conversion
+        audio_button = get_localized_message(user_language, "audio_button")
+        keyboard = [[InlineKeyboardButton(audio_button, callback_data="convert_to_audio")]]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
+        # Send the summary along with the inline button to the user
+        await context.bot.send_message(
+            chat_id=update.message.chat_id,
+            text=plain_text_summary,
+            reply_markup=reply_markup
+        )
+
+        # Store the summary and video ID in user_data for future use (audio conversion)
+        context.user_data['summary'] = plain_text_summary
+        context.user_data['summary_id'] = summary_response.data.summary_id  # Assuming the summary ID is returned
+        context.user_data['video_id'] = video_id
+
+    except Exception as e:
+        # Handle any unexpected errors
+        await update.message.reply_text(get_localized_message(user_language, "no_content_err"))
 
 # Callback query handler to trigger speech conversion and remove the button
-async def convert_to_audio_callback(update, context):
-    """Handles the inline button callback to convert summary to speech."""
+async def convert_to_audio_callback(update: Update, context: CallbackContext):
+    """
+    Handles the inline button callback to convert the summary to speech.
+    """
     query = update.callback_query
     await query.answer()  # Acknowledge the callback query
     
@@ -42,4 +80,4 @@ async def convert_to_audio_callback(update, context):
     await query.edit_message_reply_markup(reply_markup=None)
 
     # Proceed with speech conversion
-    await handle_speech_conversion(update, context)
+    await handle_audio_request(update, context)
