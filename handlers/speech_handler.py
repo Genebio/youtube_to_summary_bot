@@ -47,7 +47,7 @@ async def handle_audio_request(update, context):
             performer="youtube_to_summary_bot"
         )
 
-    except Exception as e:
+    except Exception:
         # Handle any unexpected errors
         no_audio_err = get_localized_message(user_language, "no_audio_err")
         await context.bot.send_message(chat_id=chat_id, text=no_audio_err)

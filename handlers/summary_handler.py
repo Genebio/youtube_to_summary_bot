@@ -1,4 +1,3 @@
-from repositories.user_repository import UserRepository
 from services.summary_service import SummaryService
 from utils.localizer import get_localized_message
 from utils.db_connection import get_db
@@ -64,7 +63,7 @@ async def handle_summary_request(update: Update, context: CallbackContext):
         context.user_data['summary_id'] = summary_response.data.summary_id  # Assuming the summary ID is returned
         context.user_data['video_id'] = video_id
 
-    except Exception as e:
+    except Exception:
         # Handle any unexpected errors
         await update.message.reply_text(get_localized_message(user_language, "no_content_err"))
 

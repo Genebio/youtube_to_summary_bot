@@ -1,7 +1,8 @@
 import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
-from models.base import Base
+from utils.logger import logger
+
 
 # Fetch database credentials from environment variables
 DB_USER = os.getenv("DB_USER")
@@ -17,7 +18,8 @@ if not all([DB_USER, DB_PASS, DB_NAME, DB_HOST]):
 DATABASE_URL = f"postgresql+psycopg2://{DB_USER}:{DB_PASS}@{DB_HOST}/{DB_NAME}"
 
 # Create the SQLAlchemy engine
-engine = create_engine(DATABASE_URL, echo=True)  # Set echo=True for debugging SQL queries in logs
+DEBUG_MODE = os.getenv("DEBUG", "False").lower() == "true"
+engine = create_engine(DATABASE_URL, echo=DEBUG_MODE)
 
 # Configure session maker (optionally using scoped_session if multithreading is required)
 SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
@@ -29,6 +31,7 @@ def get_db():
         yield db
     except Exception as e:
         db.rollback()  # Rollback the session on error
+        logger.error(f"Database session rollback due to error: {e}")
         raise e
     finally:
         db.close()

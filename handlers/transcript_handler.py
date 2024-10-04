@@ -56,6 +56,6 @@ async def handle_video_link(update: Update, context: CallbackContext):
         context.user_data['session'] = transcript_response.data['session']
         context.user_data['user_language'] = user_language
 
-    except Exception as e:
+    except Exception:
         # Handle any unexpected errors
         await update.message.reply_text(get_localized_message(user_language, "no_content_err"))
