@@ -25,7 +25,7 @@ class SummaryRepository:
             logger.error(f"Error fetching summary: {str(e)}")
         return None
 
-    def save_summary(self, user: User, session: UserSession, video_url: str, video_id: str,
+    def save_summary(self, user: User, session: UserSession, video_url: str, video_id: str, summary_version: str,
                      language_code: str, text_summary: str, video_duration: Optional[int] = None,
                      input_tokens: Optional[int] = None, output_tokens: Optional[int] = None,
                      summary_model: Optional[str] = None) -> Optional[Summary]:
@@ -37,7 +37,9 @@ class SummaryRepository:
                 video_url=video_url,
                 video_id=video_id,
                 language_code=language_code,
+                summary_version=summary_version,
                 text_summary=text_summary,
+                word_count=len(text_summary.split()),
                 video_duration=video_duration,
                 input_tokens=input_tokens,
                 output_tokens=output_tokens,

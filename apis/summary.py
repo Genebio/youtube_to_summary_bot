@@ -2,7 +2,7 @@ import asyncio
 from typing import Dict, Optional
 from openai import RateLimitError, OpenAIError
 from utils.logger import logger
-from config.constants import OPENAI_SUMMARY_PROMPT, OPENAI_SUMMARY_MODEL
+from config.summary_config import SummaryConfig
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
 @retry(
@@ -19,21 +19,19 @@ async def summarize_transcript(transcript: str, client, language: str = "en") ->
         completion = await client.chat.completions.create(
             messages=[{
                 "role": "user",
-                "content": f"{OPENAI_SUMMARY_PROMPT}. Present the summary in '{language}' language:\n\n{transcript}"
+                "content": f"{SummaryConfig.get_prompt()}. Present the summary in '{language}' language:\n\n{transcript}"
             }],
-            model=OPENAI_SUMMARY_MODEL
+            model=SummaryConfig.get_model()
         )
 
         summary = completion.choices[0].message.content
         input_tokens = completion.usage.prompt_tokens
         output_tokens = completion.usage.completion_tokens
-        summary_model = OPENAI_SUMMARY_MODEL
 
         logger.info(f"Successfully generated summary. Input tokens: {input_tokens}, Output tokens: {output_tokens}")
 
         return {
             'summary': summary,
-            'summary_model': summary_model,
             'input_tokens': input_tokens,
             'output_tokens': output_tokens,
             'error': None

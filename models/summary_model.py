@@ -1,6 +1,5 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, UniqueConstraint
+from sqlalchemy import Column, Integer, String, Text, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
-from utils.datetime_utils import get_current_timestamp
 from models.base import Base
 
 class Summary(Base):
@@ -12,7 +11,9 @@ class Summary(Base):
     video_id = Column(String(50), nullable=False)
     video_url = Column(String(100), nullable=False)
     language_code = Column(String(10), nullable=False)
+    summary_version = Column(String(10), nullable=False)
     text_summary = Column(Text)
+    word_count = Column(Integer)
     video_duration = Column(Integer, nullable=True)
     input_tokens = Column(Integer)
     output_tokens = Column(Integer)

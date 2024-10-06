@@ -17,7 +17,7 @@ __all__ = ['get_db', 'init_db', 'create_tables']
 DATABASE_URL = f"postgresql+psycopg2://{DB_USER}:{DB_PASS}@{DB_HOST}/{DB_NAME}"
 
 # Create the SQLAlchemy engine
-engine = create_engine(DATABASE_URL, echo=True)
+engine = create_engine(DATABASE_URL, echo=False)
 
 # Configure session maker (optionally using scoped_session if multithreading is required)
 SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))

@@ -10,6 +10,7 @@ from utils.datetime_utils import format_timestamp_for_display
 from telegram import Update
 from telegram.ext import CallbackContext
 from config.config import OPENAI_CLIENT
+from config.summary_config import SummaryConfig
 from utils.logger import logger
 
 async def handle_video_link(update: Update, context: CallbackContext):
@@ -80,8 +81,8 @@ async def handle_video_link(update: Update, context: CallbackContext):
 
         summary_repo.save_summary(
             user=user, session=session, video_url=video_url, video_id=video_id,
-            language_code=user_language, text_summary=summary,
-            video_duration=video_duration, summary_model=summary_data['summary_model'],
+            language_code=user_language, text_summary=summary, summary_version=SummaryConfig.get_version(),
+            video_duration=video_duration, summary_model=SummaryConfig.get_model(), 
             input_tokens=summary_data['input_tokens'], output_tokens=summary_data['output_tokens']
         )
         
