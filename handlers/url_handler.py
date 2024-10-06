@@ -3,7 +3,7 @@ from apis.summary import summarize_transcript
 from repositories.user_repository import UserRepository
 from repositories.session_repository import SessionRepository
 from repositories.summary_repository import SummaryRepository
-from utils.formatter import extract_video_id, truncate_by_token_count
+from utils.formatter import extract_video_id, truncate_by_token_count, remove_markdown_v2_symbols
 from utils.localizer import get_localized_message
 from utils.db_connection import get_db, init_db
 from utils.datetime_utils import format_timestamp_for_display
@@ -75,7 +75,7 @@ async def handle_video_link(update: Update, context: CallbackContext):
             await update.message.reply_text(get_localized_message(user_language, "general_error_msg"))
             return
         
-        summary = summary_data['summary']
+        summary = remove_markdown_v2_symbols(summary_data['summary'])
         await update.message.reply_text(summary)
 
         summary_repo.save_summary(
