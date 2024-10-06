@@ -3,46 +3,114 @@ from models.session_model import Session as UserSession
 from typing import Optional
 from utils.datetime_utils import get_formatted_time
 from utils.memory_utils import get_current_ram_usage, get_ram_free_mb
+from utils.logger import logger
+import gc
 
 
 class SessionRepository:
+    """
+    Repository for managing user sessions with memory tracking.
+    Designed to work with FastAPI's dependency injection and existing db session management.
+    """
+    
     def __init__(self, db: Session):
+        """
+        Initialize repository with a database session from FastAPI's dependency injection.
+        The db session lifecycle is managed by the get_db() dependency.
+        
+        Args:
+            db: SQLAlchemy session provided by FastAPI dependency injection
+        """
         self.db = db
-
+        self._active_sessions = {}  # Track active sessions and their peak memory
+    
     def create_session(self, user_id: int) -> UserSession:
         """
-        Create and save a new session for the given user with initial RAM usage.
-        Start tracking RAM usage.
+        Create and save a new session for the given user with memory tracking.
+        
+        Args:
+            user_id: The ID of the user starting the session
+            
+        Returns:
+            UserSession: The newly created session object
         """
         initial_ram_usage = get_current_ram_usage()
-
+        
         new_session = UserSession(
             user_id=user_id,
-            start_time=get_formatted_time(),  # Set the start time when session is created
-            ram_usage_mb=initial_ram_usage  # Store initial RAM usage as an integer
+            start_time=get_formatted_time(),
+            initial_ram_mb=initial_ram_usage,
+            peak_ram_mb=initial_ram_usage,
+            ram_free_mb=get_ram_free_mb()
         )
+        
         self.db.add(new_session)
-        self.db.commit()
-        self.db.refresh(new_session)  # Populate the session_id
+        self.db.flush()  # Get the ID without committing
+        
+        # Start tracking this session's memory usage
+        self._active_sessions[new_session.session_id] = {
+            'peak_ram': initial_ram_usage,
+            'start_ram': initial_ram_usage
+        }
+        
+        logger.info(f"Created new session {new_session.session_id} for user {user_id} "
+                   f"with initial RAM usage: {initial_ram_usage}MB")
+        
         return new_session
+
+    def update_peak_memory(self, session_id: int) -> None:
+        """
+        Update the peak memory usage for an active session.
+        Should be called periodically during session lifetime.
+        """
+        if session_id in self._active_sessions:
+            current_ram = get_current_ram_usage()
+            if current_ram > self._active_sessions[session_id]['peak_ram']:
+                self._active_sessions[session_id]['peak_ram'] = current_ram
+                
+                session = self.db.query(UserSession).get(session_id)
+                if session:
+                    session.peak_ram_mb = current_ram
+                    self.db.flush()
 
     def end_session(self, session: UserSession, end_reason: str) -> Optional[UserSession]:
         """
-        End a session by updating the shutdown time, session duration, and reason for session termination.
-        Track RAM used during the session and free RAM left.
+        End a session with final measurements.
+        
+        Args:
+            session: The session to end
+            end_reason: The reason for ending the session
+            
+        Returns:
+            Optional[UserSession]: The updated session object
         """
-        # Capture the final RAM usage at the end of the session
-        final_ram_usage = get_current_ram_usage()
-
-        # Calculate the RAM used during the session (absolute value of the difference)
-        ram_used = abs(session.ram_usage_mb - final_ram_usage)
-
-        session.shutdown_time = get_formatted_time()  # Set the end time
-        session.ram_usage_mb = ram_used  # Update the session with the RAM used (as a whole number)
-        session.ram_free_mb = get_ram_free_mb()  # Store the free RAM left
-        session.session_end_reason = end_reason  # Set the reason why the session ended
-        session.session_duration_sec = (session.shutdown_time - session.start_time).total_seconds()
-
-        self.db.commit()
-        self.db.refresh(session)
-        return session
+        try:
+            final_ram_usage = get_current_ram_usage()
+            session_data = self._active_sessions.get(session.session_id, {})
+            peak_ram = session_data.get('peak_ram', final_ram_usage)
+            start_ram = session_data.get('start_ram', session.initial_ram_mb)
+            
+            # Update session with final metrics
+            session.shutdown_time = get_formatted_time()
+            session.final_ram_mb = final_ram_usage
+            session.peak_ram_mb = peak_ram
+            session.ram_used_mb = final_ram_usage - start_ram
+            session.ram_free_mb = get_ram_free_mb()
+            session.session_end_reason = end_reason
+            session.session_duration_sec = (session.shutdown_time - session.start_time).total_seconds()
+            
+            # Force garbage collection
+            gc.collect()
+            
+            logger.info(
+                f"Ended session {session.session_id} after {session.session_duration_sec}s. "
+                f"Peak RAM: {peak_ram}MB, Final RAM: {final_ram_usage}MB, "
+                f"Total RAM used: {session.ram_used_mb}MB"
+            )
+            
+            return session
+            
+        finally:
+            # Always cleanup tracking
+            if session.session_id in self._active_sessions:
+                del self._active_sessions[session.session_id]

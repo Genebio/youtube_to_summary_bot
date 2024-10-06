@@ -1,18 +1,20 @@
 import asyncio
+from typing import Optional, Dict
 from tenacity import retry, stop_after_attempt, wait_fixed, retry_if_exception_type
 from youtube_transcript_api import (
     YouTubeTranscriptApi, NoTranscriptFound, TranscriptsDisabled, VideoUnavailable
 )
 from utils.logger import logger
-from utils.formatter import ServiceResponse
 
 
 # Retry configuration: Retry 3 times with a 2-second delay in between
 @retry(stop=stop_after_attempt(3), wait=wait_fixed(2), retry=retry_if_exception_type(Exception))
-async def fetch_youtube_transcript(video_id: str) -> ServiceResponse:
-    """Asynchronously fetches the transcript (manual or auto-generated) for a YouTube video and returns a ServiceResponse."""
+async def fetch_youtube_transcript(video_id: str) -> Optional[Dict[str, str]]:
+    """Asynchronously fetches the transcript (manual or auto-generated) for a YouTube video and returns a dictionary with the transcript text and video duration."""
     try:
         logger.info(f"Fetching transcript for video ID: '{video_id}'")
+        
+        # Fetch the transcripts and their data in a single blocking thread
         transcripts = await asyncio.to_thread(YouTubeTranscriptApi.list_transcripts, video_id)
         
         # Prioritize manual transcripts over auto-generated ones
@@ -20,26 +22,34 @@ async def fetch_youtube_transcript(video_id: str) -> ServiceResponse:
         if not transcript:
             transcript = next((t for t in transcripts if t.is_generated), None)
         
-        if transcript:
-            transcript_data = await asyncio.to_thread(transcript.fetch)
-            transcript_text = ' '.join([entry['text'] for entry in transcript_data])
-            
-            # Get the last transcript entry's start time and duration
-            last_entry = transcript_data[-1]
-            total_duration_seconds = last_entry['start'] + last_entry['duration']  # Use last entry for duration
-                        
-            return ServiceResponse(data={
-                'transcript': transcript_text,
-                'video_duration': total_duration_seconds
-            })
+        # If no transcript is found, log and return None
+        if not transcript:
+            logger.warning(f"No transcript found for video ID: '{video_id}'")
+            return None
         
-        logger.warning(f"No transcript found for video ID: '{video_id}'")
-        return ServiceResponse(error="No transcript found")
+        transcript_data = transcript.fetch()
+        if not transcript_data:
+            logger.warning(f"Transcript data is empty for video ID: '{video_id}'")
+            return None
+        
+        # Extract the transcript text
+        transcript_text = ' '.join([entry['text'] for entry in transcript_data if 'text' in entry])
+        
+        # Get the last transcript entry's start time and duration, if available
+        last_entry = transcript_data[-1] if transcript_data else None
+        if last_entry and 'start' in last_entry and 'duration' in last_entry:
+            video_duration = last_entry['start'] + last_entry['duration']
+        else:
+            logger.warning(f"Could not determine video duration for video ID: '{video_id}'")
+            video_duration = None
+
+        logger.info(f"Successfully fetched transcript for video ID: '{video_id}'")
+        return {'transcript_text': transcript_text, 'video_duration': video_duration}
     
     except (NoTranscriptFound, TranscriptsDisabled, VideoUnavailable) as e:
-        logger.warning(f"Transcript error for video ID '{video_id}': {str(e)}")
-        return ServiceResponse(error=f"Transcript error: {str(e)}")
+        logger.error(f"YouTube transcript API error for video ID '{video_id}': {str(e)}")
+        return
 
     except Exception as e:
-        logger.error(f"An unexpected error occurred while fetching the transcript for video ID '{video_id}': {str(e)}")
-        return ServiceResponse(error=f"Unexpected error: {str(e)}")
+        logger.error(f"Unexpected error during YouTube transcript API call for video ID '{video_id}': {str(e)}")
+        return

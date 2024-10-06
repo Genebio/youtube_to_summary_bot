@@ -7,9 +7,9 @@ class User(Base):
     __tablename__ = 'users'
     
     user_id = Column(Integer, primary_key=True, autoincrement=True)
-    username = Column(String(50), unique=True, nullable=True)
-    first_name = Column(String(100), nullable=True)
-    last_name = Column(String(100), nullable=True)
+    username = Column(String(50), unique=True, nullable=False)
+    first_name = Column(String(100))
+    last_name = Column(String(100))
     language_code = Column(String(10), default='en')
     subscription = Column(Boolean, default=False)
     created_at = Column(DateTime, default=get_formatted_time)

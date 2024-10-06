@@ -11,19 +11,12 @@ class Summary(Base):
     session_id = Column(Integer, ForeignKey('sessions.session_id'), nullable=False)
     video_id = Column(String(50), nullable=False)
     video_url = Column(String(100), nullable=False)
-    
-    # Keep language_code to identify summary with video_id
     language_code = Column(String(10), nullable=False)
-    
     text_summary = Column(Text)
     video_duration = Column(Integer, nullable=True)
     input_tokens = Column(Integer)
     output_tokens = Column(Integer)
     summary_model = Column(String(100))
-    requested_audio = Column(Boolean, default=False)
-    got_audio = Column(Boolean, default=False)
-    tts_model = Column(String(100), nullable=True)
-    tts_tokens = Column(Integer, nullable=True)
     created_at = Column(DateTime, default=get_formatted_time)
 
     # Unique constraint for video_id and language_code combination

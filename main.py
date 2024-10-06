@@ -1,17 +1,14 @@
 import sys
 import httpx
-from fastapi import FastAPI, Request
 from telegram import Update
-from telegram.ext import (
-    Application, CommandHandler, MessageHandler, CallbackQueryHandler, filters, PicklePersistence
-    )
+from fastapi import FastAPI, Request
+from telegram.ext import Application, CommandHandler, MessageHandler, filters
 from tenacity import retry, stop_after_attempt, wait_fixed
 
 from utils.logger import logger
 from config.config import TOKEN
-from handlers.transcript_handler import handle_video_link
+from handlers.url_handler import handle_video_link
 from handlers.command_menu import start
-from handlers.summary_handler import convert_to_audio_callback
 
 # Add the /app directory to sys.path so Python can find utils, apis, handlers, etc.
 sys.path.append('/app')
@@ -22,11 +19,8 @@ app = FastAPI()
 # Initialize the global HTTP client with connection pooling
 http_client = httpx.AsyncClient()
 
-# Use a pickle-based persistence object
-persistence = PicklePersistence(filepath='bot_data.pkl')
-
 # Create Telegram application (bot) instance
-telegram_application = Application.builder().token(TOKEN).persistence(persistence).build()
+telegram_application = Application.builder().token(TOKEN).build()
 
 # Register bot handlers, including the callback handler for inline buttons
 def register_handlers(application):
@@ -34,9 +28,6 @@ def register_handlers(application):
     # Register start command and video link message handlers
     application.add_handler(CommandHandler("start", start))
     application.add_handler(MessageHandler(filters.Entity("url"), handle_video_link))
-
-    # Register the callback query handler for 'convert_to_audio'
-    application.add_handler(CallbackQueryHandler(convert_to_audio_callback, pattern='convert_to_audio'))
 
 # Call the function to register handlers
 register_handlers(telegram_application)

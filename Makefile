@@ -31,3 +31,7 @@ stop:
 .PHONY: venv
 sql-connect:
 	gcloud beta sql connect mybots-europe-west3 --user=postgres
+
+.PHONY: venv
+sql-kill:
+	lsof -ti :9470 | xargs kill -9

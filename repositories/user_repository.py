@@ -1,56 +1,149 @@
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import SQLAlchemyError
 from models.user_model import User
-from typing import Optional
-
+from typing import Optional, List
+from utils.logger import logger
 
 class UserRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def get_user_by_id(self, user_id: int) -> Optional[User]:
+    def get_user_by_username(self, username: str) -> Optional[User]:
         """
-        Fetch a user based on user_id.
+        Fetch a user based on username.
         Returns None if no user is found.
         """
-        return self.db.query(User).filter(User.user_id == user_id).first()
+        try:
+            user = self.db.query(User).filter(User.username == username).first()
+            if user:
+                logger.info(f"Retrieved user with username '{username}'")
+            else:
+                logger.info(f"No user found with username '{username}'")
+            return user
+        except SQLAlchemyError as e:
+            logger.error(f"Error fetching user by username: {str(e)}")
+            return None
 
-    def create_user(self, username: Optional[str] = None, first_name: Optional[str] = None, 
-                    last_name: Optional[str] = None, language_code: str = 'en') -> User:
+    def create_user(self, username: str, first_name: str = None, last_name: str = None, language_code: str = 'en') -> Optional[User]:
         """
-        Create and save a new user. Allows username, first_name, and last_name to be None.
-        
-        If no username is provided, the field will be set to None, and it will not affect the unique constraint.
+        Create and save a new user. Requires a username and can take optional first/last name and language_code.
         """
-        new_user = User(
-            username=username,  # Can be None
-            first_name=first_name,  # Can be None
-            last_name=last_name,  # Can be None
-            language_code=language_code  # Default is 'en' if not provided
-        )
-        self.db.add(new_user)
-        self.db.commit()
-        self.db.refresh(new_user)  # This will populate the auto-incremented user_id
-        return new_user
+        try:
+            new_user = User(
+                username=username,
+                first_name=first_name,
+                last_name=last_name,
+                language_code=language_code
+            )
+            self.db.add(new_user)
+            self.db.commit()
+            self.db.refresh(new_user)
+            logger.info(f"Created new user with username '{username}'")
+            return new_user
+        except SQLAlchemyError as e:
+            self.db.rollback()
+            logger.error(f"Error creating user: {str(e)}")
+            return None
+
+    def get_or_create_user(self, username: str, first_name: str = None, last_name: str = None,
+                           language_code: str = 'en') -> Optional[User]:
+        """
+        Fetch a user by username. If the user doesn't exist, create a new one.
+        """
+        user = self.get_user_by_username(username)
+        if not user:
+            user = self.create_user(username, first_name, last_name, language_code)
+        return user
+
+    def update_user(self, user_id: int, **kwargs) -> Optional[User]:
+        """
+        Update an existing user's information.
+        """
+        try:
+            user = self.db.query(User).filter(User.user_id == user_id).first()
+            if user:
+                for key, value in kwargs.items():
+                    setattr(user, key, value)
+                self.db.commit()
+                self.db.refresh(user)
+                logger.info(f"Updated user with ID {user_id}")
+                return user
+            else:
+                logger.warning(f"User with ID {user_id} not found")
+                return None
+        except SQLAlchemyError as e:
+            self.db.rollback()
+            logger.error(f"Error updating user: {str(e)}")
+            return None
+
+    def delete_user(self, user_id: int) -> bool:
+        """
+        Delete a user by their ID.
+        """
+        try:
+            user = self.db.query(User).filter(User.user_id == user_id).first()
+            if user:
+                self.db.delete(user)
+                self.db.commit()
+                logger.info(f"Deleted user with ID {user_id}")
+                return True
+            else:
+                logger.warning(f"User with ID {user_id} not found")
+                return False
+        except SQLAlchemyError as e:
+            self.db.rollback()
+            logger.error(f"Error deleting user: {str(e)}")
+            return False
+
+    def get_all_users(self, limit: int = 100, offset: int = 0) -> List[User]:
+        """
+        Fetch a list of all users with pagination.
+        """
+        try:
+            users = self.db.query(User).order_by(User.created_at.desc()).limit(limit).offset(offset).all()
+            logger.info(f"Retrieved {len(users)} users")
+            return users
+        except SQLAlchemyError as e:
+            logger.error(f"Error fetching all users: {str(e)}")
+            return []
+
+    def get_user_by_id(self, user_id: int) -> Optional[User]:
+        """
+        Fetch a user by their ID.
+        """
+        try:
+            user = self.db.query(User).filter(User.user_id == user_id).first()
+            if user:
+                logger.info(f"Retrieved user with ID {user_id}")
+            else:
+                logger.info(f"No user found with ID {user_id}")
+            return user
+        except SQLAlchemyError as e:
+            logger.error(f"Error fetching user by ID: {str(e)}")
+            return None
 
     def update_user_language(self, user_id: int, language_code: str) -> Optional[User]:
         """
-        Update a user's language_code.
-        Returns the updated user object or None if the user is not found.
+        Update a user's language code.
         """
-        user = self.get_user_by_id(user_id)
+        return self.update_user(user_id, language_code=language_code)
 
-        if not user:
+    def toggle_user_subscription(self, user_id: int) -> Optional[User]:
+        """
+        Toggle a user's subscription status.
+        """
+        try:
+            user = self.get_user_by_id(user_id)
+            if user:
+                user.subscription = not user.subscription
+                self.db.commit()
+                self.db.refresh(user)
+                logger.info(f"Toggled subscription for user with ID {user_id}")
+                return user
+            else:
+                logger.warning(f"User with ID {user_id} not found")
+                return None
+        except SQLAlchemyError as e:
+            self.db.rollback()
+            logger.error(f"Error toggling user subscription: {str(e)}")
             return None
-
-        user.language_code = language_code
-        self.db.commit()
-        self.db.refresh(user)
-        return user
-
-    def get_user_language_code(self, user_id: int) -> Optional[str]:
-        """
-        Fetch the language code for a user by user_id.
-        Returns the language code or None if the user is not found.
-        """
-        user = self.get_user_by_id(user_id)
-        return user.language_code if user else None

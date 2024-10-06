@@ -31,10 +31,6 @@ CREATE TABLE IF NOT EXISTS summaries (
     input_tokens INT,  -- Number of input tokens
     output_tokens INT,  -- Number of output tokens
     summary_model VARCHAR(100),  -- GPT model used
-    requested_audio BOOLEAN DEFAULT FALSE,  -- Whether audio summary was requested
-    got_audio BOOLEAN DEFAULT FALSE,  -- Whether audio summary was generated
-    tts_model VARCHAR(100),  -- TTS model used for audio summary
-    tts_tokens INT,  -- Number of tokens used by TTS
     created_at TIMESTAMP,  -- set creation timestamp
     UNIQUE (video_id, language_code)  -- Ensure each video summary is unique for a language
 );

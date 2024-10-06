@@ -1,4 +1,3 @@
-import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from utils.logger import logger
@@ -9,8 +8,7 @@ from config.config import DB_USER, DB_PASS, DB_NAME, DB_HOST
 DATABASE_URL = f"postgresql+psycopg2://{DB_USER}:{DB_PASS}@{DB_HOST}/{DB_NAME}"
 
 # Create the SQLAlchemy engine
-DEBUG_MODE = os.getenv("DEBUG", "False").lower() == "true"
-engine = create_engine(DATABASE_URL, echo=DEBUG_MODE)
+engine = create_engine(DATABASE_URL, echo=True)
 
 # Configure session maker (optionally using scoped_session if multithreading is required)
 SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
