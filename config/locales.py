@@ -23,6 +23,7 @@ locales = {
         'no_content_err': "⚠️ Sorry, we can't get insights from this video. Try another one? 🎥",
         'no_valid_link_err': "⚠️ Oops! That doesn't seem like a valid YouTube link. Please double-check and try again. 😊",
         'summary_msg': "✅ Extracting key insights for you... 🎯",
+        'general_error_msg': "😓 Oops! Something went wrong. Try another video? 🔄",
         'audio_button': "🔊 Audio",
         'audio_msg': "🔊 Audio in progress... (about 30 sec)",
         'no_audio_err': "🔊❌ Audio unavailable. Try another video?",

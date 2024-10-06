@@ -25,15 +25,6 @@ class SessionRepository:
         self._active_sessions = {}  # Track active sessions and their peak memory
     
     def create_session(self, user_id: int) -> UserSession:
-        """
-        Create and save a new session for the given user with memory tracking.
-        
-        Args:
-            user_id: The ID of the user starting the session
-            
-        Returns:
-            UserSession: The newly created session object
-        """
         initial_ram_usage = get_current_ram_usage()
         
         new_session = UserSession(
@@ -45,9 +36,8 @@ class SessionRepository:
         )
         
         self.db.add(new_session)
-        self.db.flush()  # Get the ID without committing
+        self.db.flush()
         
-        # Start tracking this session's memory usage
         self._active_sessions[new_session.session_id] = {
             'peak_ram': initial_ram_usage,
             'start_ram': initial_ram_usage
