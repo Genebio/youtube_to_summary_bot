@@ -3,6 +3,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from models.user_model import User
 from typing import Optional, List
 from utils.logger import logger
+from utils.datetime_utils import get_current_timestamp
+
 
 class UserRepository:
     def __init__(self, db: Session):
@@ -33,7 +35,8 @@ class UserRepository:
                 username=username,
                 first_name=first_name,
                 last_name=last_name,
-                language_code=language_code
+                language_code=language_code,
+                created_at=get_current_timestamp()
             )
             self.db.add(new_user)
             self.db.commit()

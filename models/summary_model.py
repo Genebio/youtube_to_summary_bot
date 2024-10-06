@@ -1,6 +1,6 @@
-from sqlalchemy import Column, Integer, String, Boolean, Text, DateTime, ForeignKey, UniqueConstraint
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
-from utils.datetime_utils import get_formatted_time
+from utils.datetime_utils import get_current_timestamp
 from models.base import Base
 
 class Summary(Base):
@@ -17,7 +17,7 @@ class Summary(Base):
     input_tokens = Column(Integer)
     output_tokens = Column(Integer)
     summary_model = Column(String(100))
-    created_at = Column(DateTime, default=get_formatted_time)
+    created_at = Column(Integer)
 
     # Unique constraint for video_id and language_code combination
     __table_args__ = (UniqueConstraint('video_id', 'language_code', name='_video_language_uc'),)

@@ -1,8 +1,26 @@
-# utils/datetime_utils.py
-from datetime import datetime
-from config.config import ARMENIA_TZ, DATETIME_FORMAT
+from datetime import datetime, timezone
+import time
 
-def get_formatted_time():
-    """Returns the current time in Armenia formatted as 'day-month-year hour:min:sec'."""
-    armenian_time = datetime.now(ARMENIA_TZ)
-    return armenian_time.strftime(DATETIME_FORMAT)
+def get_current_timestamp() -> int:
+    """
+    Returns the current time as a Unix timestamp (seconds since the epoch).
+    """
+    return int(time.time())
+
+def timestamp_to_datetime(timestamp: int) -> datetime:
+    """
+    Converts a Unix timestamp to a datetime object in UTC.
+    """
+    return datetime.fromtimestamp(timestamp, tz=timezone.utc)
+
+def datetime_to_timestamp(dt: datetime) -> int:
+    """
+    Converts a datetime object to a Unix timestamp.
+    """
+    return int(dt.timestamp())
+
+def format_timestamp_for_display(timestamp: int) -> str:
+    """
+    Formats a Unix timestamp as a string for display purposes.
+    """
+    return datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime('%d-%m-%Y %H:%M:%S')

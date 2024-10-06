@@ -1,6 +1,5 @@
 from google.cloud import secretmanager
 from openai import AsyncOpenAI
-import pytz
 import urllib.parse
 from utils.logger import logger
 
@@ -42,7 +41,3 @@ if not DB_HOST:
 
 OPENAI_CLIENT = AsyncOpenAI(api_key=OPENAI_API_KEY)
 
-# Time zone for Armenia
-ARMENIA_TZ = pytz.timezone('Asia/Yerevan')
-# Standard datetime format: 'day-month-year hour:min:sec'
-DATETIME_FORMAT = '%d-%m-%Y %H:%M:%S'

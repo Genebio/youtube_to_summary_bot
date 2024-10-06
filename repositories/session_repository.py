@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from models.session_model import Session as UserSession
 from typing import Optional
-from utils.datetime_utils import get_formatted_time
+from utils.datetime_utils import get_current_timestamp
 from utils.memory_utils import get_current_ram_usage, get_ram_free_mb
 from utils.logger import logger
 import gc
@@ -29,7 +29,7 @@ class SessionRepository:
         
         new_session = UserSession(
             user_id=user_id,
-            start_time=get_formatted_time(),
+            start_time=get_current_timestamp(),
             initial_ram_mb=initial_ram_usage,
             peak_ram_mb=initial_ram_usage,
             ram_free_mb=get_ram_free_mb()
@@ -44,7 +44,7 @@ class SessionRepository:
         }
         
         logger.info(f"Created new session {new_session.session_id} for user {user_id} "
-                   f"with initial RAM usage: {initial_ram_usage}MB")
+                    f"with initial RAM usage: {initial_ram_usage}MB")
         
         return new_session
 
@@ -64,32 +64,22 @@ class SessionRepository:
                     self.db.flush()
 
     def end_session(self, session: UserSession, end_reason: str) -> Optional[UserSession]:
-        """
-        End a session with final measurements.
-        
-        Args:
-            session: The session to end
-            end_reason: The reason for ending the session
-            
-        Returns:
-            Optional[UserSession]: The updated session object
-        """
         try:
             final_ram_usage = get_current_ram_usage()
             session_data = self._active_sessions.get(session.session_id, {})
             peak_ram = session_data.get('peak_ram', final_ram_usage)
             start_ram = session_data.get('start_ram', session.initial_ram_mb)
             
-            # Update session with final metrics
-            session.shutdown_time = get_formatted_time()
+            current_time = get_current_timestamp()
+            
+            session.shutdown_time = current_time
+            session.session_duration_sec = current_time - session.start_time
             session.final_ram_mb = final_ram_usage
             session.peak_ram_mb = peak_ram
             session.ram_used_mb = final_ram_usage - start_ram
             session.ram_free_mb = get_ram_free_mb()
             session.session_end_reason = end_reason
-            session.session_duration_sec = (session.shutdown_time - session.start_time).total_seconds()
             
-            # Force garbage collection
             gc.collect()
             
             logger.info(
@@ -100,7 +90,9 @@ class SessionRepository:
             
             return session
             
+        except Exception as e:
+            logger.error(f"Error ending session: {str(e)}")
+            return None
         finally:
-            # Always cleanup tracking
             if session.session_id in self._active_sessions:
                 del self._active_sessions[session.session_id]

@@ -6,6 +6,7 @@ from repositories.summary_repository import SummaryRepository
 from utils.formatter import extract_video_id, truncate_by_token_count
 from utils.localizer import get_localized_message
 from utils.db_connection import get_db, init_db
+from utils.datetime_utils import format_timestamp_for_display
 from telegram import Update
 from telegram.ext import CallbackContext
 from config.config import OPENAI_CLIENT
@@ -20,6 +21,9 @@ async def handle_video_link(update: Update, context: CallbackContext):
         logger.warning(f"Invalid video link provided: {video_url}")
         await update.message.reply_text(get_localized_message(user_language, "no_valid_link_err"))
         return
+
+    session = None
+    session_repo = None
 
     try:
         init_db()
@@ -81,10 +85,19 @@ async def handle_video_link(update: Update, context: CallbackContext):
             input_tokens=summary_data['input_tokens'], output_tokens=summary_data['output_tokens']
         )
         
-        session_repo.end_session(session, end_reason="Summary generated and saved")
-       
+        if session_repo and session:
+            end_session_result = session_repo.end_session(session, end_reason="Summary generated and saved")
+            if not end_session_result:
+                logger.error("Failed to end session properly")
+            else:
+                logger.info(f"Session ended at: {format_timestamp_for_display(end_session_result.shutdown_time)}")
+          
     except Exception as e:
         logger.error(f"Unexpected error in handle_video_link: {str(e)}")
-        if 'session' in locals() and 'session_repo' in locals():
-            session_repo.end_session(session, end_reason=f"Unexpected error: {str(e)}")
+        if session_repo and session:
+            end_session_result = session_repo.end_session(session, end_reason=f"Unexpected error: {str(e)}")
+            if not end_session_result:
+                logger.error("Failed to end session properly after an error")
+            else:
+                logger.info(f"Session ended at: {format_timestamp_for_display(end_session_result.shutdown_time)}")
         await update.message.reply_text(get_localized_message(user_language, "general_error_msg"))
