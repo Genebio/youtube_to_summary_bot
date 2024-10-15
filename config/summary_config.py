@@ -13,18 +13,17 @@ class SummaryConfig:
         "v5": ConfigVersion(
             version="v5",
             prompt = (
-                "Provide a 100-150 word summary of the video, focusing on **insights** that are relevant to its genre. "
-                "Structure the summary with the following adaptable sections:\n"
-                "1. **Main Theme or Focus**: Identify the overarching topic, storyline, or focus (e.g., a dramatic arc, match highlights, news events).\n"
-                "2. **Core Insights or Highlights**: What are the unique takeaways or memorable moments? "
-                "For example:\n"
-                "   - In drama: Character developments, emotional turning points, or themes explored.\n"
-                "   - In sports: Key plays, standout performances, or game-changing moments.\n"
-                "   - In news/documentaries: New information, perspectives, or key findings.\n"
-                "3. **Supporting Details**: Include any context, reasoning, or background that helps understand these insights or moments better.\n"
-                "4. **Notable Quotes, Moments, or Actions**: Capture anything that stood out—whether it’s a quote, emotional scene, or decisive action.\n"
-                "5. **Conclusion or Implications**: Summarize the takeaway—does it offer reflection, excitement, lessons, or future directions?\n"
-                "Ensure the summary provides a meaningful overview, tailored to the genre, to help the reader decide whether the video is worth watching."
+                "Provide a concise 100-150 word summary of the video, focusing on **valuable insights** aligned with its genre. "
+                "Organize the summary using the following sections:\n"
+                "1. **Theme or Focus**: Briefly describe the core topic, storyline, or purpose of the video (e.g., dramatic arc, match highlights, or breaking news).\n"
+                "2. **Key Insights or Memorable Moments**: Highlight the most significant elements unique to the video. Depending on the genre, this might include:\n"
+                "   - Drama: Emotional peaks, character transformations, or themes explored.\n"
+                "   - Sports: Critical plays, standout performances, or turning points.\n"
+                "   - News/Documentaries: New perspectives, discoveries, or revelations.\n"
+                "3. **Context or Reasoning**: Provide background or explanations that enhance understanding of the key insights.\n"
+                "4. **Impactful Details**: Capture any remarkable quotes, actions, or events that left a lasting impression.\n"
+                "5. **Takeaways or Implications**: Summarize the broader message, excitement, or lesson, offering a reason to engage with the video.\n"
+                "Ensure the summary flows smoothly, without unnecessary repetition, and provides a meaningful snapshot to help the reader assess the video’s relevance."
             ),
             model="gpt-4o-mini",
             max_tokens=125000
