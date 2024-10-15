@@ -10,10 +10,22 @@ class ConfigVersion:
 
 class SummaryConfig:
     VERSIONS: Dict[str, ConfigVersion] = {
+        "v6": ConfigVersion(
+            version="v6",
+            prompt=(
+                "Provide a brief structured summary of the video in 50-150 words, focusing on valuable insights aligned with its genre. "
+                "Include any important statements or quotes made by the speakers, "
+                "as well as the reasoning or explanations they provide for their arguments. "
+                "Ensure that the summary captures the main ideas and conclusions presented in the video. "
+                "Focus on providing a clear overview to assist in determining whether the video is worth watching."
+            ),
+            model="gpt-4o-mini",
+            max_tokens=125000
+        ),
         "v5": ConfigVersion(
             version="v5",
             prompt = (
-                "Provide a concise 100-150 word summary of the video, focusing on **valuable insights** aligned with its genre. "
+                "Provide a brief 50-150 word summary of the video, focusing on **valuable insights** aligned with its genre. "
                 "Organize the summary using the following sections:\n"
                 "1. **Theme or Focus**: Briefly describe the core topic, storyline, or purpose of the video (e.g., dramatic arc, match highlights, or breaking news).\n"
                 "2. **Key Insights or Memorable Moments**: Highlight the most significant elements unique to the video. Depending on the genre, this might include:\n"
@@ -92,7 +104,7 @@ class SummaryConfig:
         # Add more versions here as needed
     }
 
-    CURRENT_VERSION = "v5"
+    CURRENT_VERSION = "v6"
 
     @classmethod
     def set_current_version(cls, version: str):
