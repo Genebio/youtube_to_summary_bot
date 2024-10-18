@@ -1,7 +1,6 @@
 from google.cloud import secretmanager
 from openai import AsyncOpenAI
 import urllib.parse
-from utils.logger import logger
 
 
 def get_secret(secret_id, version_id):

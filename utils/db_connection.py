@@ -14,7 +14,7 @@ from models.summary_model import Summary  # noqa: F401
 __all__ = ['get_db', 'init_db', 'create_tables']
 
 # Define the database URL
-DATABASE_URL = f"postgresql+psycopg2://{DB_USER}:{DB_PASS}@{DB_HOST}/{DB_NAME}"
+DATABASE_URL = f"postgresql+psycopg2://{DB_USER}:{DB_PASS}@{DB_HOST}:25060/{DB_NAME}"
 
 # Create the SQLAlchemy engine
 engine = create_engine(DATABASE_URL, echo=False)
