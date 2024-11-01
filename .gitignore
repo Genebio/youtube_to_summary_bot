@@ -2,3 +2,4 @@ request_openai.py
 .env
 venv/
 .DS_Store
+*.crt

@@ -7,6 +7,8 @@ anyio==4.4.0
     #   httpx
     #   openai
     #   starlette
+asyncio==3.4.3
+    # via -r requirements.in
 cachetools==5.5.0
     # via google-auth
 certifi==2024.8.30

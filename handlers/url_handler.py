@@ -1,3 +1,4 @@
+from  asyncio import sleep
 from apis.fetch_transcript import fetch_youtube_transcript
 from apis.summary import summarize_transcript
 from repositories.user_repository import UserRepository
@@ -44,12 +45,14 @@ async def handle_video_link(update: Update, context: CallbackContext):
         summary_repo = SummaryRepository(db)
         existing_summary = summary_repo.fetch_summary(video_id, user_language)
         
+        await update.message.reply_text("🔍 ...")
+
         if existing_summary:
             session_repo.end_session(session, end_reason="Fetched existing summary")
+            await update.message.reply_text(get_localized_message(user_language, "summary_msg"))
+            await sleep(3)
             await update.message.reply_text(existing_summary)
             return
-
-        await update.message.reply_text("🔍 ...")
 
         # Step 1: Fetch video transcript
         transcript_data = await fetch_youtube_transcript(video_id)
