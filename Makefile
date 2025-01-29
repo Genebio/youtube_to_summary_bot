@@ -29,13 +29,5 @@ stop:
 	gcloud run services delete $(BOT_NAME) --region $(REGION)
 
 .PHONY: venv
-sql-connect:
-	gcloud beta sql connect mybots-europe-west3 --user=postgres
-
-.PHONY: venv
 sql-clean:
 	lsof -ti :9470 | xargs kill -9
-
-.PHONY: venv
-sql-drop-db:
-	DROP TABLE IF EXISTS users, sessions, summaries;

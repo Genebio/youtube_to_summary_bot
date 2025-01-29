@@ -49,6 +49,7 @@ async def handle_video_link(update: Update, context: CallbackContext):
 
         if existing_summary:
             session_repo.end_session(session, end_reason="Fetched existing summary")
+            await sleep(1)
             await update.message.reply_text(get_localized_message(user_language, "summary_msg"))
             await sleep(3)
             await update.message.reply_text(existing_summary)
