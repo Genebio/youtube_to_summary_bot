@@ -1,7 +1,9 @@
 import asyncio
+import hashlib
 from typing import Dict, Optional
 from openai import RateLimitError, OpenAIError
 from utils.logger import logger
+from utils.cache import cached
 from config.summary_config import SummaryConfig
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
@@ -11,10 +13,22 @@ from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_excep
     retry=retry_if_exception_type((RateLimitError, OpenAIError, asyncio.TimeoutError)),
     reraise=True
 )
+@cached(expiry=86400 * 7)  # Cache for 7 days
 async def summarize_transcript(transcript: str, client, language: str = "en") -> Dict[str, Optional[str | int]]:
-    """Summarizes the provided text using the OpenAI API asynchronously, with retry logic."""
+    """
+    Summarizes the provided text using the OpenAI API asynchronously, with retry logic.
+    
+    Results are cached based on the combination of transcript content, model, and language
+    to reduce API calls for identical requests.
+    """
     try:
         logger.info("Attempting to summarize the transcript using OpenAI API...")
+
+        # Create a hash of the content for deterministic caching
+        content_hash = hashlib.md5(
+            f"{transcript}:{SummaryConfig.get_model()}:{language}:{SummaryConfig.get_prompt()}".encode()
+        ).hexdigest()
+        logger.info(f"Content hash for caching: {content_hash}")
 
         completion = await client.chat.completions.create(
             messages=[{

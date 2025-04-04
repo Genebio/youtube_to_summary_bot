@@ -5,12 +5,19 @@ from youtube_transcript_api import (
     YouTubeTranscriptApi, NoTranscriptFound, TranscriptsDisabled, VideoUnavailable
 )
 from utils.logger import logger
+from utils.cache import cached
 
 
 # Retry configuration: Retry 3 times with a 2-second delay in between
 @retry(stop=stop_after_attempt(3), wait=wait_fixed(2), retry=retry_if_exception_type(Exception))
+@cached(expiry=86400)  # Cache for 24 hours
 async def fetch_youtube_transcript(video_id: str) -> Optional[Dict[str, str]]:
-    """Asynchronously fetches the transcript (manual or auto-generated) for a YouTube video and returns a dictionary with the transcript text and video duration."""
+    """
+    Asynchronously fetches the transcript (manual or auto-generated) for a YouTube video 
+    and returns a dictionary with the transcript text and video duration.
+    
+    Results are cached for faster retrieval on subsequent requests for the same video.
+    """
     try:
         logger.info(f"Fetching transcript for video ID: '{video_id}'")
         
@@ -48,8 +55,8 @@ async def fetch_youtube_transcript(video_id: str) -> Optional[Dict[str, str]]:
     
     except (NoTranscriptFound, TranscriptsDisabled, VideoUnavailable) as e:
         logger.error(f"YouTube transcript API error for video ID '{video_id}': {str(e)}")
-        return
+        return None
 
     except Exception as e:
         logger.error(f"Unexpected error during YouTube transcript API call for video ID '{video_id}': {str(e)}")
-        return
+        raise
