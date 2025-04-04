@@ -1,5 +1,4 @@
 import json
-import asyncio
 from typing import Any, Optional, TypeVar, Callable, Awaitable
 from functools import wraps
 import redis.asyncio as redis
