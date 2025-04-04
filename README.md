@@ -64,7 +64,7 @@ A Telegram bot that summarizes YouTube videos by fetching their transcripts and 
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/youtube_to_summary.git
+   git clone https://github.com/Genebio/youtube_to_summary_bot
    cd youtube_to_summary
    ```
 
